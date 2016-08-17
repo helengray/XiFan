@@ -12,25 +12,14 @@ import {
   
 } from 'react-native';
 
-import MainScene from './js/MainScene'
+import MainScene from './js/MainScene';
+import AppNavigator from './js/component/AppNavigator';
 
 class XiFan extends Component {
 
   render(){
     return(
-      <Navigator 
-        initialRoute={{url:'',name:'',component:MainScene}}
-        renderScene={(route,navigator)=>{
-          let Scene = route.component;
-          return <Scene url = {route.url} name={route.name} navigator={navigator}/>
-        }}
-        configureScene={(route) => {
-          if(route.sceneConfig){
-            return route.sceneConfig;
-          }
-          return Navigator.SceneConfigs.HorizontalSwipeJump;
-        }}
-      />
+      <AppNavigator id='main' url='' name='' component={MainScene}/>
       );
   }
 }

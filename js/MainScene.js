@@ -2,30 +2,34 @@ import React,{Component} from 'react';
 import {
 	View,
 	Text,
-	DeviceEventEmitter,
-	BackAndroid,
+	Navigator,
 	Platform,
 	StyleSheet,
 	ViewPagerAndroid,
 	TouchableOpacity,
+	Image,
+	BackAndroid
 } from 'react-native';
-import TitleBar from './component/TitleBarComponent'
-import DramaComponent from './component/DramaComponent'
+import HomeScene from './HomeScene'
+import MyScene from './MyScene';
 //首页
 export default class MainScene extends Component{
-
 	constructor(props){
 		super(props);
-		this.state = {
-		  url:'/hanju/new/',
-		  tabIndex:0,
-		};
+		this.state={
+			tabIndex:0,
+		}
+
 	}
 
 	componentDidMount(){
-		this.subscription = DeviceEventEmitter.addListener('dataChange',this._onListenerCallback.bind(this));
 		this._addBackAndroidListener(this.props.navigator);
 	}
+
+	componentWillUnMount(){
+		this._removeBackAndroidListener();
+	}
+
 	//监听Android返回键
 	_addBackAndroidListener(navigator){
 		if(Platform.OS==='android'){
@@ -41,112 +45,72 @@ export default class MainScene extends Component{
     		});
 		}
 	}
-
-	componentWillUnmount(){
-		this.subscription.remove();
-		this._removeBackAndroidListener();
-	}
-
+	//移除监听
 	_removeBackAndroidListener(){
 		if (Platform.OS === 'android') {
 	      BackAndroid.removeEventListener('hardwareBackPress');  
 	    }  
 	}
 
-
-	_onListenerCallback(params){
-		//console.log('params = '+ params);
-		this.setState({
-		  url:params,
-		});
-	};
-
 	render(){
+		var page = this.state.tabIndex===0?<HomeScene navigator={this.props.navigator}/>:<MyScene />;
 		return(
-			<View style={{flex:1}}>
-				<TitleBar title='首页' subtitle='看韩剧,上稀饭' subScene={false}/>
-				<View style={{height:35,flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:'#f74c31'}}>
-					<View style={{flex:1}}>
-						<TouchableOpacity style={{flex:1,}} activeOpacity={0.6} onPress={this._newestTextPress.bind(this)}>
-							<Text style={this.state.tabIndex===0?styles.TabSelect:styles.TabUnSelect}>最新</Text>
-						</TouchableOpacity>
-							<View style={this.state.tabIndex===0?styles.TabUnderlineSelect:styles.TabUnderlineUnSelect}/>
-					</View>
-					<View style={{flex:1}}>
-						<TouchableOpacity style={{flex:1}} activeOpacity={0.6} onPress={this._hotTextPress.bind(this)}>
-							<Text style={this.state.tabIndex===0?styles.TabUnSelect:styles.TabSelect}>最热</Text>
-						</TouchableOpacity>
-							<View style={this.state.tabIndex===0?styles.TabUnderlineUnSelect:styles.TabUnderlineSelect}/>
-					</View>
+			<View style={{flex:1,justifyContent:'flex-end',overflow:'hidden'}}>
+				{page}
+				<View style={{backgroundColor:'#d5d5d5',height:1,}}/> 
+				<View style={{height:55,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+					<TouchableOpacity style={{flex:1}} activeOpacity={0.6} onPress={this._onTabPress.bind(this,0)}>
+						<View style={styles.ItemView}>
+							<Image 
+								style={{height:30,width:30}} 
+								source={this.state.tabIndex==0?require('../img/icon_home_select.png'):require('../img/icon_home_unselect.png')}
+							/>
+							<Text style={this.state.tabIndex==0?styles.TabTextSelect:styles.TabTextUnSelect}>首页</Text>
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity style={{flex:1}} activeOpacity={0.6} onPress={this._onTabPress.bind(this,1)}>
+						<View style={styles.ItemView}>
+							<Image 
+								style={{height:30,width:30}} 
+								source={this.state.tabIndex==0?require('../img/icon_my_unselect.png'):require('../img/icon_my_select.png')}
+							/>
+							<Text style={this.state.tabIndex==0?styles.TabTextUnSelect:styles.TabTextSelect}>我的</Text>
+						</View>
+					</TouchableOpacity>
 				</View>
-				<ViewPagerAndroid 
-					style={{flex:1}} 
-					initialPage={0} 
-					onPageSelected={this._onPageSelected.bind(this)}
-					scrollEnabled={true}
-					pageMargin={0}
-					onPageScrollStateChanged={this._onPageScrollStateChanged}
-					keyboardDismissMode='on-drag'
-					ref={viewPager=>{this.viewPager = viewPager}}
-				>
-					<View>
-						<DramaComponent url='/hanju/new/' navigator={this.props.navigator}/>
-					</View>
-					<View>
-						<DramaComponent url='/hanju/renqi/' navigator={this.props.navigator}/>
-					</View>
-				</ViewPagerAndroid>
+				
 			</View>
+			
 			);
 	}
 
-	_onPageSelected(event){
-		const position = event.nativeEvent.position;
-		this.setState({
-			tabIndex:position,
-		});
-	}
-
-	_onPageScrollStateChanged(status){
-		//idle 空闲，意味着当前没有交互。
-
-		//dragging 拖动中，意味着当前页面正在被拖动。
-
-		//settling 处理中，意味着当前页面发生过交互，且正在结束开头或收尾的动画。
-	}
-	//最新
-	_newestTextPress(){
-		this.viewPager.setPage(0);
-		this.setState({
-			tabIndex:0,
-		});
-	}
-	//最热
-	_hotTextPress(){
-		//this.viewPager.setPageWithoutAnimation(1);
-		this.viewPager.setPage(1);
-		this.setState({
-			tabIndex:1,
-		});
-	}
+	//tab点击事件
+  	_onTabPress(index){
+  		console.log('index = '+ index);
+  		this.setState({
+  			tabIndex:index,
+  		});
+  		
+  	}
 }
 
 var styles = StyleSheet.create({
-	TabSelect:{
+	ItemView:{
+		flex:1,
+		justifyContent:'center',
+		alignItems:'center',
+		marginTop:3,
+	},
+	TabTextSelect:{
 		flex:1,
 		textAlign:'center',
-		color:'white',
+		alignItems:'center',
+		color:'#f74c31',
 	},
-	TabUnderlineSelect:{
-		backgroundColor:'white',
-		height:2,
-	},
-	TabUnSelect:{
+	TabTextUnSelect:{
 		flex:1,
 		textAlign:'center',
+		alignItems:'center',
 		color:'#d5d5d5',
-	},
-	TabUnderlineUnSelect:{
-		height:0,
 	},
 });
