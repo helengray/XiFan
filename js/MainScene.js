@@ -8,7 +8,7 @@ import {
 	ViewPagerAndroid,
 	TouchableOpacity,
 	Image,
-	BackAndroid
+	BackAndroid,
 } from 'react-native';
 import HomeScene from './HomeScene'
 import MyScene from './MyScene';
@@ -53,10 +53,24 @@ export default class MainScene extends Component{
 	}
 
 	render(){
+		// <ViewPagerAndroid 
+				// 	style={{flex:1}} 
+				// 	initialPage={0} 
+				// 	scrollEnabled={false}
+				// 	ref={(viewPager)=>{this.viewPager = viewPager}}
+				// >
+				// 	<View style={{flex:1}}>
+				// 		<HomeScene navigator={this.props.navigator}/>
+				// 	</View>
+				// 	<View style={{flex:1}}>
+				// 		<MyScene />
+				// 	</View>
+				// </ViewPagerAndroid>
 		var page = this.state.tabIndex===0?<HomeScene navigator={this.props.navigator}/>:<MyScene />;
 		return(
-			<View style={{flex:1,justifyContent:'flex-end',overflow:'hidden'}}>
+			<View style={{flex:1,justifyContent:'flex-end'}}>
 				{page}
+				
 				<View style={{backgroundColor:'#d5d5d5',height:1,}}/> 
 				<View style={{height:55,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
 					<TouchableOpacity style={{flex:1}} activeOpacity={0.6} onPress={this._onTabPress.bind(this,0)}>
@@ -86,11 +100,11 @@ export default class MainScene extends Component{
 
 	//tab点击事件
   	_onTabPress(index){
-  		console.log('index = '+ index);
+//console.log('index = '+ index);
+  		//this.viewPager.setPage(index);
   		this.setState({
   			tabIndex:index,
   		});
-  		
   	}
 }
 

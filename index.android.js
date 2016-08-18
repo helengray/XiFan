@@ -7,28 +7,22 @@
 import React, { Component } from 'react';
 import {
   AppRegistry,
-  StyleSheet,
   Navigator,
   
 } from 'react-native';
 
-import MainScene from './js/MainScene';
+//import MainScene from './js/MainScene';
 import AppNavigator from './js/component/AppNavigator';
+import HomeScene from './js/HomeScene';
 
 class XiFan extends Component {
 
   render(){
     return(
-      <AppNavigator id='main' url='' name='' component={MainScene}/>
+      <AppNavigator id='HomeScene' data='' name='' component={HomeScene}/>
       );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5FCFF',
-  },
-});
 
 AppRegistry.registerComponent('XiFan', () => XiFan);

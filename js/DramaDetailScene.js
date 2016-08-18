@@ -1,0 +1,391 @@
+import React,{Component} from 'react';
+import {
+	View,
+	Text,
+	StyleSheet,
+	Image,
+	RefreshControl,
+	ScrollView,
+	TouchableOpacity,
+	ViewPagerAndroid,
+	Picker
+} from 'react-native';
+import Cheerio from 'cheerio';
+import TitleBar from './component/TitleBarComponent';
+
+const HOST_URL = 'http://m.y3600.com/78/';
+//this.state={
+// 	tabIndex:0,
+// 	desc:'',//简介
+// 	playList:[
+// 	  [
+// 		{
+// 			text:第01集,
+// 			method:"ck_yk('CNTM0MTMzMg==')"
+// 		}
+// 	  ],[]...
+// 	],
+// 	sourceList:[],//来源列表
+// 	currSource:0,//当前来源列表索引
+// 	hasStart:false,//是否已经开播
+//}
+
+export default class DramaDetailScene extends Component{
+
+	constructor(props){
+		super(props);
+		this.state={
+			tabIndex:0,
+			loaded:false,
+			desc:'',//简介
+			playList:[],
+			sourceList:[],//来源列表
+			currSource:0,//当前来源列表索引
+			hasStart:false,//是否已经开播
+			currPlayList:[],//当前播放的集数，对应到来源列表
+		}
+	}
+
+	componentDidMount(){
+		this._fetchData(this.props.data.url);
+	}
+
+	_fetchData(url){
+		var s = url.split("/");
+		url = HOST_URL+s[s.length-1];
+//console.log('request url = '+url);
+		fetch(url)
+			.then((resp) => resp.text())
+			.then((result) => {
+				var desc = '';
+				var playList = [];
+				var hasStart = false;
+				var sourceList = [];
+				var currPlayList = [];
+//console.log('result = '+result);
+				var $ = Cheerio.load(result);
+				/**解析简介*/
+				var p = $('ul.content').find('p');
+				
+				p.each((index,item)=>{//获取简介详情
+					var text = $(item).text();
+					if(text != ''){
+						desc=desc+text+"\n";
+					}
+					
+				});
+				/**解析来源*/
+				var as = $('ul.online').find('h4').find('span').find('a');
+				if(as){
+					as.each((index,item)=>{
+						sourceList.push($(item).text());
+						currPlayList.push(0);
+					})
+				}
+console.log('_fetchData currPlayList = '+JSON.stringify(currPlayList));
+				/**解析集数*/
+				
+				//多种来源
+				//[[],[],[]]
+				var ul = $('div#playlist').find('ul');
+				if(ul && ul.length > 0){
+					hasStart = true;
+					ul.each((index,item)=>{
+						var ulItem=[];
+						var li = $(item).find('li');
+						if(li && li.length>0){//来源里面的集数列表
+							li.each((i,m)=>{
+								var info = {
+									text:$(m).text(),
+									method:$(m).find('a').attr('onclick'),
+								};
+//console.log('info = '+JSON.stringify(info));
+								ulItem.push(info);
+							});
+							//排序
+							//ulItem.sort((a,b)=>{return a>b});
+							playList.push(ulItem);
+						}
+					});
+				}else{
+					hasStart = false;
+					var ul = $('ul.coming');
+					ul.find('h5').remove();
+					playList.push($(ul).text());
+				}
+				
+				
+				this.setState({
+					desc:desc,
+					playList:playList,
+					hasStart:hasStart,
+					sourceList:sourceList,
+					currPlayList:currPlayList,
+					loaded:true,
+				});
+			})
+			.done();
+	}
+	/**剧集列表空界面*/
+	_getPlayListEmptyView(text){
+		return (<Text key='0' style={{padding:10,fontSize:14}}>{text}</Text>);
+	}
+	/**剧集列表界面*/
+	_getPlayListView(key,text,currPlayIndex){
+		return (
+			<TouchableOpacity 
+			key={key} 
+			style={currPlayIndex==key?styles.buttonSelect:styles.buttonUnSelect} 
+			activeOpacity={0.8}
+			onPress={this._onPlayButtonPress.bind(this,key)}
+			>
+				<Text style={{color:'black',fontSize:12,padding:4}}>{text}</Text>
+			</TouchableOpacity>
+			);
+	}
+	/**集数按钮点击事件*/
+	_onPlayButtonPress(index){
+		var currSource = this.state.currSource;
+		var currPlayList = this.state.currPlayList;
+		currPlayList[currSource] = index;
+		this.setState({
+			currPlay:currPlayList,
+		});
+	}
+	/**获取来源下拉框选项view*/
+	_getSourceListItemView(key,label){
+		return(<Picker.Item key={key} label={label} value={key}/>);
+	}
+
+	/**获取来源界面*/
+	_getSourceListView(itemViews){
+		if(itemViews && itemViews.length > 0){
+			return(
+				<Picker
+					style={{flex:1,height:40}}
+					selectedValue={this.state.currSource}
+					onValueChange={(itemValue,itemPosition)=>{
+//console.log('value='+itemValue+' position='+itemPosition);
+						this.setState({
+							currSource:itemPosition,
+						});
+					}}
+					mode={'dropdown'}
+					>
+					{itemViews}
+				</Picker>
+				);
+		}else{
+			return(<Text style={{flex:1,fontSize:12}}>未知</Text>);
+		}
+	}
+
+	//加载中页面
+	_renderLoadingView(){
+	    return(
+	    	<View style={styles.container}>
+				<TitleBar title={this.props.name} subtitle='' subScene={true} navigator={this.props.navigator}/>
+		        <View style = {{flex:1,justifyContent:'center',alignItems:'center'}}>
+		        	<Text>加载中，请稍后...</Text>
+		        </View>
+		    </View>
+	      );
+  	}
+
+	render(){
+
+		if(!this.state.loaded){
+			return this._renderLoadingView();
+		}
+		//来源view
+		var sourceList = this.state.sourceList;
+		var sourceListView;
+		var sourceListItemViews = [];
+		for (var i = 0; i < sourceList.length; i++) {
+			sourceListItemViews.push(this._getSourceListItemView(i,sourceList[i]));
+		}
+		sourceListView = this._getSourceListView(sourceListItemViews);
+		
+		//集数列表view
+		var playListViews =[];
+		var playList = this.state.playList;
+		if(!this.state.hasStart){
+			playListViews.push(this._getPlayListEmptyView(playList[0]));
+		}else{
+			try{
+				var currSource = this.state.currSource;
+				playList = playList[currSource];
+				var currPlay = this.state.currPlayList[currSource];
+				for (var i = 0; i < playList.length; i++) {
+					playListViews.push(this._getPlayListView(i,playList[i].text,currPlay));
+				}
+			}catch(e){
+
+			}
+		}
+		
+		return(
+			<View style={styles.container}>
+				<TitleBar title={this.props.name} subtitle='' subScene={true} navigator={this.props.navigator}/>
+				<View style={styles.topContainer}>
+					<Image style={styles.image} source={{uri:this.props.data.pic}}/>
+					<View style={styles.topRightContainer}>
+						<Text style={{fontSize:12}}>更新至：{this.props.data.title}</Text>
+						<View style={{height:40,flexDirection:'row',justifyContent:'center',alignItems:'center',marginTop:5}}>
+							<Text style={{fontSize:12}} >来源：</Text>
+							{sourceListView}
+						</View>
+						<TouchableOpacity style={styles.button} activeOpacity={0.8}>
+							<Image style={{height:18,width:18}} source={require('../img/icon_video_play.png')}/>
+							<Text style={{color:'white',fontSize:14}}>播放</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+				<View style={styles.centerContainer}>
+					<View style={{flex:1}}>
+						<TouchableOpacity style={styles.tabItem} activeOpacity={0.6} onPress={this._onTabPress.bind(this,0)}>
+							<Text style={this.state.tabIndex==0?styles.tabTextSelect:styles.tabTextUnSelect}>剧集</Text>
+						</TouchableOpacity>
+
+						<View style={this.state.tabIndex==0?styles.tabUnderlineSelect:styles.tabUnderlineUnSelect}/>
+					</View>
+					<View style={{flex:1}}>
+						<TouchableOpacity style={styles.tabItem} activeOpacity={0.6} onPress={this._onTabPress.bind(this,1)}>
+							<Text style={this.state.tabIndex==0?styles.tabTextUnSelect:styles.tabTextSelect}>简介</Text>
+						</TouchableOpacity>
+						<View style={this.state.tabIndex==0?styles.tabUnderlineUnSelect:styles.tabUnderlineSelect}/>
+					</View>
+				</View>
+				<View style={styles.bottomContainer}>
+					<ViewPagerAndroid 
+						style={{flex:1}} 
+						initialPage={0} 
+						scrollEnabled={true}
+						onPageSelected={this._onPageSelected.bind(this)}
+						ref={(viewPager)=>{this.viewPager = viewPager}}
+						>
+						<View style={{flex:1}}>
+							<ScrollView>
+								<View style={{flex:1,flexDirection:'row',flexWrap:'wrap',padding:5}}>
+									{playListViews}
+								</View>
+								
+							</ScrollView>
+						</View>
+						<View style={{flex:1}}>
+							<ScrollView>
+								<Text style={{padding:5,fontSize:14}}>{this.state.desc}</Text>
+							</ScrollView>
+						</View>
+					</ViewPagerAndroid>
+				</View>
+			</View>
+			);
+	}
+
+	_onTabPress(index){
+		this.viewPager.setPage(index);
+		this.setState({
+			tabIndex:index,
+		});
+	}
+
+	_onPageSelected(event){
+		const position = event.nativeEvent.position;
+		this.setState({
+			tabIndex:position,
+		});
+	}
+}
+
+var styles = StyleSheet.create({
+	container:{
+		flex:1,
+		flexDirection:'column',
+	},
+	topContainer:{
+		height:150,
+		flexDirection:'row',
+		padding:15
+	},
+	topRightContainer:{
+		flex:1,
+		flexDirection:'column',
+		marginLeft:10,
+		marginTop:5,
+		marginBottom:5,
+	},
+	image:{
+		height:120,
+		width:100,
+		resizeMode:Image.resizeMode.strech,
+	},
+	centerContainer:{
+		height:45,
+		flexDirection:'row',
+		justifyContent:'center',
+		backgroundColor:'white',
+		alignItems:'center',
+	},
+	tabItem:{
+		flex:1,
+		justifyContent:'center',
+		alignItems:'center',
+	},
+	tabTextSelect:{
+		textAlign:'center',
+		color:'#f74c31',
+	},
+	tabTextUnSelect:{
+		textAlign:'center',
+		color:'#d5d5d5',
+	},
+	tabUnderlineSelect:{
+		height:2,
+		backgroundColor:'#f74c31',
+	},
+	tabUnderlineUnSelect:{
+		height:2,
+	},
+	bottomContainer:{
+		flex:1,
+	},
+	button:{
+		flexDirection:'row',
+		width:60,
+		height:25,
+		backgroundColor:'#f74c31',
+		justifyContent:'center',
+		alignItems:'center',
+		borderRadius:10,
+		borderWidth:1,
+		borderColor:'transparent',
+		marginTop:30,
+	},
+	buttonSelect:{
+		height:25,
+		backgroundColor:'white',
+		justifyContent:'center',
+		alignItems:'center',
+		borderRadius:4,
+		borderWidth:1,
+		borderColor:'#f74c31',
+		marginTop:5,
+		marginBottom:5,
+		marginLeft:5,
+		marginRight:5,
+	},
+	buttonUnSelect:{
+		height:25,
+		backgroundColor:'#f5f5f5',
+		justifyContent:'center',
+		alignItems:'center',
+		borderRadius:4,
+		borderWidth:1,
+		borderColor:'#eeeeee',
+		marginTop:5,
+		marginBottom:5,
+		marginLeft:5,
+		marginRight:5,
+	}
+});

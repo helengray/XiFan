@@ -7,10 +7,10 @@ import {
 	Text,
 	TouchableOpacity,
 }from 'react-native';
+import AllScene from '../AllScene';
 
 export default class TitleBarComponent extends Component{
 	constructor(props){
-		props.subScene = {true};
 		super(props);
 	}
 
@@ -19,9 +19,11 @@ export default class TitleBarComponent extends Component{
 		title:'',
 		subtitle:'',
 		subScene:true,
+		hasMore:false,
 	};
 
 	render() {
+		var actions = this.props.hasMore?toolbarActions:[];
 		return(
 			<ToolbarAndroid 
 				title={this.props.title}
@@ -29,8 +31,8 @@ export default class TitleBarComponent extends Component{
 				titleColor='white'
 				subtitle={this.props.subtitle}
 				subtitleColor='#ebf0f6'
-				onActionSelected={this._onActionClick}
-				
+				actions={actions}
+				onActionSelected={this._onActionClick.bind(this)}
 				onIconClicked={this._onIconClick.bind(this)}
 				style={styles.toolbar}
 			/>
@@ -48,10 +50,15 @@ export default class TitleBarComponent extends Component{
 	_onActionClick(index){
 		switch(index){
 			case 0:
-				DeviceEventEmitter.emit('dataChange','/hanju/new/');
-				break;
-			case 1:
-				DeviceEventEmitter.emit('dataChange','/hanju/renqi/');
+				var navigator = this.props.navigator;
+				if(navigator){
+					navigator.push({
+						id:'AllScene',
+						data:'',
+						name:'全部',
+						component:AllScene
+					});
+				}
 				break;
 			default:break;
 		}
@@ -66,6 +73,5 @@ const styles = StyleSheet.create({
 	},
 });
 const toolbarActions = [
-	{title:'最新',show:'always',icon:require('../../img/icon_newest.png'),showWithText:true},
-	{title:'最热',show:'always',icon:require('../../img/icon_hot.png'),showWithText:true}
-];
+	{title:'全部',show:'always',icon:require('../../img/icon_all.png'),showWithText:true}
+]

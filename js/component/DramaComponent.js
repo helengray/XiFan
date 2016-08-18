@@ -11,7 +11,8 @@ import {
 	ToolbarAndroid,
 } from 'react-native';
 import Cheerio from 'cheerio';
-import DramaDetailComponent from './DramaDetailComponent'
+import DramaDetailScene from '../DramaDetailScene';
+
 const HOST_URL = 'http://www.y3600.com';
 const WIN_WIDTH = Dimensions.get('window').width;
 const WIN_HEIGHT = Dimensions.get('window').height;
@@ -97,7 +98,7 @@ export default class DramaComponent extends Component{
 	//获取数据并解析
 	fetchData(url){
 		url = HOST_URL+url;
-console.log('request url = '+url);
+//console.log('request url = '+url);
 		fetch(url)
 			.then((resp) => resp.text())
 			.then((result) => {
@@ -251,9 +252,10 @@ console.log('request url = '+url);
 	  		const navigator = this.props.navigator;
 	  		if(navigator){
 	  			navigator.push({
-	  				url:movie.url,
+	  				id:'DramaDetailScene',
+	  				data:movie,
 	  				name:movie.name,
-	  				component:DramaDetailComponent
+	  				component:DramaDetailScene
 	  			});
 	  		}
 	  	}

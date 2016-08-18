@@ -9,7 +9,7 @@ import {
 export default class MyScene extends Component{
 	render(){
 		return(
-			<View style={{flex:1}}>
+			<View style={{flex:1,backgroundColor:'red'}}>
 				<Text>我的页面</Text>
 			</View>
 			);

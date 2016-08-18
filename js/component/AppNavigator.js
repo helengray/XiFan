@@ -10,11 +10,12 @@ export default class AppNavigator extends Component{
 	render(){
 		return(
 			<Navigator 
-		        initialRoute={{id:this.props.id,url:this.props.url,name:this.props.name,component:this.props.component}}
+		        initialRoute={{id:this.props.id,data:this.props.data,name:this.props.name,component:this.props.component}}
 		        renderScene={(route,navigator)=>{
 		          let Scene = route.component;
-		          return <Scene id={route.id} url = {route.url} name={route.name} navigator={navigator}/>
+		          return <Scene id={route.id} data={route.data} name={route.name} navigator={navigator}/>
 		        }}
+		        style={{flex:1,}}
 		        configureScene={(route) => {
 		          if(route.sceneConfig){
 		            return route.sceneConfig;
