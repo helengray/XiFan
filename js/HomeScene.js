@@ -23,11 +23,11 @@ export default class HomeScene extends Component{
 		};
 	}
 
-	componentDidMount(){
+	/*componentDidMount(){
 		this._addBackAndroidListener(this.props.navigator);
 	}
 
-	componentWillUnMount(){
+	componentWillUnmount(){
 		this._removeBackAndroidListener();
 	}
 
@@ -51,14 +51,14 @@ export default class HomeScene extends Component{
 		if (Platform.OS === 'android') {
 	      BackAndroid.removeEventListener('hardwareBackPress');  
 	    }  
-	}
+	}*/
 
 
 	render(){
 		return(
 			<View style={{flex:1}} key='HomeScene'>
 				<TitleBar title='首页' subtitle='看韩剧,上稀饭' subScene={false} navigator={this.props.navigator} hasMore={false}/>
-				<View style={{height:35,flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:'#f74c31'}}>
+				<View style={{height:35,flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:'#ff5722'}}>
 					<View style={{flex:1}}>
 						<TouchableOpacity style={{flex:1,justifyContent:'center'}} activeOpacity={0.6} onPress={this._onTabPress.bind(this,0)}>
 							<Text style={this.state.tabIndex===0?styles.TabSelect:styles.TabUnSelect}>最新</Text>

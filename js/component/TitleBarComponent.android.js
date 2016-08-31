@@ -69,7 +69,7 @@ export default class TitleBarComponent extends Component{
 const styles = StyleSheet.create({
 	toolbar:{
 		height:56,
-		backgroundColor:'#f74c31',
+		backgroundColor:'#ff5722',
 	},
 });
 const toolbarActions = [

@@ -8,11 +8,12 @@ import {
 	ScrollView,
 	TouchableOpacity,
 	ViewPagerAndroid,
-	Picker
+	Picker,
+	ToastAndroid
 } from 'react-native';
 import Cheerio from 'cheerio';
-import TitleBar from './component/TitleBarComponent';
-
+import TitleBar from './component/TitleBarComponent.android';
+import VideoPlayScene from './VideoPlayScene';
 const HOST_URL = 'http://m.y3600.com/78/';
 //this.state={
 // 	tabIndex:0,
@@ -151,7 +152,145 @@ console.log('_fetchData currPlayList = '+JSON.stringify(currPlayList));
 		this.setState({
 			currPlay:currPlayList,
 		});
+		var playList = this.state.playList[currSource];
+		var playInfo = playList[index];
+		this._play(playInfo);
+		
 	}
+
+	_play(playInfo){
+		console.log('playInfo ='+JSON.stringify(playInfo));
+		var method = playInfo.method;
+		
+		var methodFlag = this._getMethodFlag(method);
+		var idFlag = this._getIdFlag(method);
+		
+		if(methodFlag && idFlag){
+			var id = this._getId(idFlag);
+console.log('method = '+methodFlag);
+console.log('id = '+id);
+			switch (methodFlag){
+				case 'd_bi':
+					this._d_bi(id);
+					break;
+				case 'ck_yk':
+					this._ck_yk(id);
+					break;
+				case 'yk_d':
+					this._yk_d(id);
+					break;
+				case 't_hn':
+				case 't_hn1':
+					this._t_hn(id);
+					break;
+				case 'ai_q':
+				case 'ai_u':
+					this._ai_q(id);
+					break;
+				case 'ck_m':
+				case 'ck_d':
+					this._ck_m(id);
+					break;
+				case 'd_ac':
+					this._d_ac(id);
+					break;
+				default :
+					ToastAndroid.show('赞不支持播放',ToastAndroid.SHORT);
+				break;
+			}
+		}else{
+			//弹提示'播放地址错误'
+		}
+	}
+	/**获取方法名*/
+	_getMethodFlag(method){
+		var i = method.indexOf("(");
+		if(i != -1){
+			return method.substring(0,i);
+		}
+		return ;
+	}
+	/**获取方法参数*/
+	_getIdFlag(method){
+		var start = method.indexOf("(");
+		var end = method.indexOf(")");
+		if(start != -1 && end != -1){
+			var params = method.substring(start+1,end);
+			return params.split(',')[0];
+		}
+	}
+	/**去掉参数字符引号*/
+	_getId(idFlag){
+		console.log('idFlag = '+idFlag);
+		return idFlag.replace("'","").replace("'","");
+	}
+	/**哔哩哔哩*/
+	_d_bi(id){
+		var strs = id.split('&');
+		var url = 'http://www.bilibili.com/mobile/video/av'+strs[0]+'.html#'+strs[1];
+		this._goVideoPlay('bili',url);
+	}
+	/**优酷*/
+	_ck_yk(id){
+		var url = 'http://p.y3600.com/yk/'+id+'&m=1&1.html'
+		this._goVideoPlay('yk',url);
+	}
+	_yk_d(id){
+		var url = 'http://v.youku.com/v_show/id_'+id+'.html';
+		this._goVideoPlay('yk_d',url);
+	}
+	/**土豆*/
+	_t_hn(id){
+		// if(id.indexOf('&icode=')==-1){
+		// 	id = id+'&icode='+id;
+		// }
+		// var url = 'https://p1.y3600.com/td/'+id+'&1.html';
+		var index = id.indexOf('&icode=');
+		if(index != -1){
+			id = id.substring(0,index);
+		}
+		var url = 'http://www.tudou.com/programs/view/html5embed.action?code='+id;
+		this._goVideoPlay('td',url);
+	}
+	/**爱奇艺*/
+	_ai_q(id){
+		var url = 'http://m.iqiyi.com/shareplay.html?vid='+id;
+		this._goVideoPlay('ai_q',url);
+	}
+
+	_ck_m(id){
+		var url = 'https://p1.y3600.com/le/'+id+'&1.html';
+		this._goVideoPlay('ck_m',url);
+	}
+
+	_ai_u(method){
+		var start = method.indexOf("(");
+		var end = method.indexOf(")");
+		if(start != -1 && end != -1){
+			var params = method.substring(start+1,end);
+			var url = params.split(',')[1];
+			this._goVideoPlay('ai_u',url);
+		}
+	}
+
+	_d_ac(id){
+		var url = 'https://p1.y3600.com/ac/'+id+'&1.html';//'http://m.acfun.tv/ykplayer?date=undefined#vid='+id;
+		this._goVideoPlay('d_ac',url);
+	}
+
+	_goVideoPlay(type,url){
+console.log('video player url = '+url);
+		this.props.navigator.push({
+			id:'VideoPlayScene',
+			name:'',
+			data:{
+				type:type,
+				url:url,
+			},
+			component:VideoPlayScene,
+		});
+	}
+
 	/**获取来源下拉框选项view*/
 	_getSourceListItemView(key,label){
 		return(<Picker.Item key={key} label={label} value={key}/>);
@@ -235,7 +374,7 @@ console.log('_fetchData currPlayList = '+JSON.stringify(currPlayList));
 							<Text style={{fontSize:12}} >来源：</Text>
 							{sourceListView}
 						</View>
-						<TouchableOpacity style={styles.button} activeOpacity={0.8}>
+						<TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={this._onPlayViedoPress.bind(this)}>
 							<Image style={{height:18,width:18}} source={require('../img/icon_video_play.png')}/>
 							<Text style={{color:'white',fontSize:14}}>播放</Text>
 						</TouchableOpacity>
@@ -296,6 +435,15 @@ console.log('_fetchData currPlayList = '+JSON.stringify(currPlayList));
 			tabIndex:position,
 		});
 	}
+	//播放按钮点击事件
+	_onPlayViedoPress(){
+		var currSource = this.state.currSource;
+		var currPlayList = this.state.currPlayList;
+		var index = currPlayList[currSource];
+		var playList = this.state.playList[currSource];
+		var playInfo = playList[index];
+		this._play(playInfo);
+	}
 }
 
 var styles = StyleSheet.create({
@@ -334,7 +482,7 @@ var styles = StyleSheet.create({
 	},
 	tabTextSelect:{
 		textAlign:'center',
-		color:'#f74c31',
+		color:'#ff5722',
 	},
 	tabTextUnSelect:{
 		textAlign:'center',
@@ -342,7 +490,7 @@ var styles = StyleSheet.create({
 	},
 	tabUnderlineSelect:{
 		height:2,
-		backgroundColor:'#f74c31',
+		backgroundColor:'#ff5722',
 	},
 	tabUnderlineUnSelect:{
 		height:2,
@@ -354,7 +502,7 @@ var styles = StyleSheet.create({
 		flexDirection:'row',
 		width:60,
 		height:25,
-		backgroundColor:'#f74c31',
+		backgroundColor:'#ff5722',
 		justifyContent:'center',
 		alignItems:'center',
 		borderRadius:10,
@@ -369,7 +517,7 @@ var styles = StyleSheet.create({
 		alignItems:'center',
 		borderRadius:4,
 		borderWidth:1,
-		borderColor:'#f74c31',
+		borderColor:'#ff5722',
 		marginTop:5,
 		marginBottom:5,
 		marginLeft:5,

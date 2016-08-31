@@ -90,7 +90,7 @@ export default class DramaComponent extends Component{
 
 	//组件生命周期的最后一步，组件将走到生命的尽头，这是我们需要做一些回收的工作。 
 	//如取消事件绑定，关闭网络连接等操作。
-	componentWillUnMount (){
+	componentWillUnmount (){
 
 	}
 	
@@ -101,8 +101,17 @@ export default class DramaComponent extends Component{
 //console.log('request url = '+url);
 		fetch(url)
 			.then((resp) => resp.text())
-			.then((result) => {
-				var $ = Cheerio.load(result);
+			.then((html) => {
+				this.resolveHtml(html);
+			})
+			.catch((e)=>{
+				console.log(e);
+			})
+			.done();
+	}
+	//解析html
+	resolveHtml(html){
+		var $ = Cheerio.load(html);
 				var body = $('div.m-ddone').find('ul');//ui
 
 				var dramaList = this.state.dramaList;
@@ -156,15 +165,13 @@ export default class DramaComponent extends Component{
 					//
 					dramaList.datas.push(dramaItem);
 				});
-				console.log('datas length 2= '+dramaList.datas.length);
+//console.log('datas length 2= '+dramaList.datas.length);
 				this.setState({
 					movies:this.state.movies.cloneWithRows(dramaList.datas),
 					loaded:true,
 					isRefreshing:false,
 					dramaList:dramaList,
 				});
-			})
-			.done();
 	}
 
 	render(){
@@ -228,7 +235,7 @@ export default class DramaComponent extends Component{
 	      );
   	}
 
-  	//ListViue item
+  	//ListView item
 	_renderMovieView(movie){
 	    return(
 	      <View style={styles.row} key={movie.url}>

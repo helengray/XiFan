@@ -26,7 +26,7 @@ export default class MainScene extends Component{
 		this._addBackAndroidListener(this.props.navigator);
 	}
 
-	componentWillUnMount(){
+	componentWillUnmount(){
 		this._removeBackAndroidListener();
 	}
 
@@ -119,7 +119,7 @@ var styles = StyleSheet.create({
 		flex:1,
 		textAlign:'center',
 		alignItems:'center',
-		color:'#f74c31',
+		color:'#ff5722',
 	},
 	TabTextUnSelect:{
 		flex:1,

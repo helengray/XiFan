@@ -11,15 +11,14 @@ import {
   
 } from 'react-native';
 
-//import MainScene from './js/MainScene';
+import MainScene from './js/MainScene';
 import AppNavigator from './js/component/AppNavigator';
-import HomeScene from './js/HomeScene';
 
 class XiFan extends Component {
 
   render(){
     return(
-      <AppNavigator id='HomeScene' data='' name='' component={HomeScene}/>
+      <AppNavigator id='HomeScene' data='' name='' component={MainScene}/>
       );
   }
 }
