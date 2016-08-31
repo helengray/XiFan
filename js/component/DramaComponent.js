@@ -37,6 +37,14 @@ export default class DramaComponent extends Component{
 		}
 	}
 
+	static propTypes = {
+        url: React.PropTypes.string.isRequired,
+    }
+
+    /*static defaultProps = {
+        url: '/hanju/new',
+    }*/
+
 	//组件开始渲染render之前被调用。
 	//作用相当于Fragment生命周期中的onCreate方法。
 	componentWillMount(){

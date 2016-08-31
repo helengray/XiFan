@@ -1,5 +1,6 @@
 # XiFan
 一个使用react native实现的韩剧影视APP
+![效果图](https://github.com/helengray/XiFan/raw/master/xifan.gif)
 ## 注意
 node_modules 没有上传，要自己执行npm install。
 
