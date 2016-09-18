@@ -16,9 +16,9 @@ export default class TitleBarComponent extends Component{
 
 	//初始化props
 	static defaultProps = {
-		title:'',
-		subtitle:'',
-		subScene:true,
+		title:'',//标题
+		subtitle:'',//副标题
+		subScene:true,//是否是子页面
 		hasMore:false,
 	};
 

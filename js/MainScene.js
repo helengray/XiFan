@@ -9,6 +9,7 @@ import {
 	TouchableOpacity,
 	Image,
 	BackAndroid,
+	ToastAndroid,
 } from 'react-native';
 import HomeScene from './HomeScene'
 import MyScene from './MyScene';
@@ -33,12 +34,19 @@ export default class MainScene extends Component{
 	//监听Android返回键
 	_addBackAndroidListener(navigator){
 		if(Platform.OS==='android'){
+			var currTime = 0;
 			BackAndroid.addEventListener('hardwareBackPress',()=>{
       			if(!navigator){return false;}
       			const routers = navigator.getCurrentRoutes();
       			if(routers.length == 1){
+      				var nowTime = (new Date()).valueOf();
+                    if(nowTime - currTime > 2000){
+                        currTime = nowTime;
+                        ToastAndroid.show("再按一次退出程序",ToastAndroid.SHORT);
+                        return true;
+                    }
       				return false;
-      			}else{
+      			}else{//在其他子页面
       				navigator.pop();
       				return true;
       			}

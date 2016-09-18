@@ -2,7 +2,6 @@ import React,{Component} from 'react';
 import {
 	View,
 	Text,
-	DeviceEventEmitter,
 	Platform,
 	StyleSheet,
 	ViewPagerAndroid,
@@ -22,36 +21,6 @@ export default class HomeScene extends Component{
 		  tabIndex:0,
 		};
 	}
-
-	/*componentDidMount(){
-		this._addBackAndroidListener(this.props.navigator);
-	}
-
-	componentWillUnmount(){
-		this._removeBackAndroidListener();
-	}
-
-	//监听Android返回键
-	_addBackAndroidListener(navigator){
-		if(Platform.OS==='android'){
-			BackAndroid.addEventListener('hardwareBackPress',()=>{
-      			if(!navigator){return false;}
-      			const routers = navigator.getCurrentRoutes();
-      			if(routers.length == 1){
-      				return false;
-      			}else{
-      				navigator.pop();
-      				return true;
-      			}
-    		});
-		}
-	}
-	//移除监听
-	_removeBackAndroidListener(){
-		if (Platform.OS === 'android') {
-	      BackAndroid.removeEventListener('hardwareBackPress');  
-	    }  
-	}*/
 
 
 	render(){

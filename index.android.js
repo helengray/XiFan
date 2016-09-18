@@ -18,7 +18,7 @@ class XiFan extends Component {
 
   render(){
     return(
-      <AppNavigator id='HomeScene' data='' name='' component={MainScene}/>
+      <AppNavigator id='MainScene' data='' name='' component={MainScene}/>
       );
   }
 }
