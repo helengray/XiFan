@@ -155,7 +155,6 @@ console.log('_fetchData currPlayList = '+JSON.stringify(currPlayList));
 		var playList = this.state.playList[currSource];
 		var playInfo = playList[index];
 		this._play(playInfo);
-		
 	}
 
 	_play(playInfo){
@@ -374,7 +373,7 @@ console.log('video player url = '+url);
 							<Text style={{fontSize:12}} >来源：</Text>
 							{sourceListView}
 						</View>
-						<TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={this._onPlayViedoPress.bind(this)}>
+						<TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={this._onPlayVideoPress.bind(this)}>
 							<Image style={{height:18,width:18}} source={require('../img/icon_video_play.png')}/>
 							<Text style={{color:'white',fontSize:14}}>播放</Text>
 						</TouchableOpacity>
@@ -436,13 +435,21 @@ console.log('video player url = '+url);
 		});
 	}
 	//播放按钮点击事件
-	_onPlayViedoPress(){
+	_onPlayVideoPress(){
 		var currSource = this.state.currSource;
 		var currPlayList = this.state.currPlayList;
-		var index = currPlayList[currSource];
-		var playList = this.state.playList[currSource];
-		var playInfo = playList[index];
-		this._play(playInfo);
+		if(currSource < currPlayList.length){
+			var index = currPlayList[currSource];
+			var playList = this.state.playList[currSource];
+			if(index < playList.length){
+				var playInfo = playList[index];
+				this._play(playInfo);
+			}else {
+				ToastAndroid.show("暂无播放信息",ToastAndroid.SHORT);
+			}
+		}else {
+			ToastAndroid.show("暂无播放信息",ToastAndroid.SHORT);
+		}
 	}
 }
 
