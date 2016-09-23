@@ -20,3 +20,28 @@ node_modules 没有上传，要自己执行npm install。
 - react-native@0.31.0
 - cheerio@0.20.0
 - events@1.1.1
+
+## 运行项目
+将项目clone下来后，cmd命令行切到项目根目录下，执行命令
+
+```
+npm install react@15.2.1
+```
+```
+npm install react-native@0.31.0
+```
+```
+npm install cheerio@0.20.0
+```
+```
+npm install events@1.1.1
+```
+
+module安装完之后，执行运行命令,记得android模拟器要连接着，并配置Debug server host & port for device的IP端口
+
+```
+react-native run-android
+```
+
+## TODO
+目前项目只支持Android，将来可能会适配IOS
