@@ -4,6 +4,7 @@ import {
     WebView,
     Text,
     NativeModules,
+    TouchableOpacity
 } from 'react-native';
 var Orientation = NativeModules.Orientation;
 import VideoView from './component/VideoView';
@@ -11,11 +12,11 @@ import VideoView from './component/VideoView';
 export default class VideoPlayScene extends Component {
     constructor(props) {
         super(props);
-        this._onPrepared = this._onPrepared.bind(this);
+        /*this._onPrepared = this._onPrepared.bind(this);
         this.state = {
             time:0,
             totalTime:0,
-        };
+        };*/
     }
 
     componentWillMount() {
@@ -24,26 +25,36 @@ export default class VideoPlayScene extends Component {
         // Orientation.getRequestedOrientation((orientation)=>{
         // 	console.log('current orientation2 :'+orientation);
         // });
-        //Orientation.setOrientation(Orientation.LANDSCAPE);
+        Orientation.setOrientation(Orientation.LANDSCAPE);
     }
 
     componentWillUnmount() {
 //console.log('componentWillUnmount');
-        //Orientation.setOrientation(Orientation.PORTRAIT);
+        Orientation.setOrientation(Orientation.PORTRAIT);
     }
 
-    // function t_hn1(l_i,this_Obj,s_f){
-    // 	if(l_i.indexOf("&icode=")<=0)l_i=l_i+"&icode="+l_i;
-    // 	t_hn(l_i,this_Obj,s_f);}
-    _onPrepared(duration){//毫秒
+    /*_onPrepared(duration){//毫秒
         console.log("JS duration = "+duration);
         this.setState({
             totalTime:duration,
         });
     }
 
+    _onPressPause(){
+        this.video.pause();
+    }
+
+    _onPressStart(){
+        this.video.start();
+    }
+
+    _onPressSeekTo(){
+        var millSecond = this.state.time + 1000;
+        this.video.seekTo(millSecond);
+    }*/
+
     render() {
-        return (
+        /*return (
             <View style={{flex: 1,justifyContent: 'center',}}>
                 <VideoView
                     style={{height: 250, width: 380}}
@@ -71,14 +82,24 @@ export default class VideoPlayScene extends Component {
                             time:progress
                         });
                     }}
+                    ref={(video)=>{this.video = video}}
                 />
                 <View style={{height:50,flexDirection:'row',justifyContent:'flex-start'}}>
-                    <Text>{this.state.time}/{this.state.totalTime}</Text>
+                    <Text style={{width:100}}>{this.state.time}/{this.state.totalTime}</Text>
+                    <TouchableOpacity style={{marginLeft:10}} onPress={this._onPressPause.bind(this)}>
+                        <Text>暂停</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{marginLeft:10}} onPress={this._onPressStart.bind(this)}>
+                        <Text>开始</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{marginLeft:10}} onPress={this._onPressSeekTo.bind(this)}>
+                        <Text>快进</Text>
+                    </TouchableOpacity>
                 </View>
 
             </View>
-        );
-        /*var html = '';
+        );*/
+        var html = '';
         var url = '';
         switch (this.props.data.type) {
             case 'bili':
@@ -205,6 +226,6 @@ export default class VideoPlayScene extends Component {
                     />
                 </View>
             );
-        }*/
+        }
     }
 }

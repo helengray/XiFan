@@ -31,6 +31,12 @@ import javax.annotation.Nullable;
  *
  */
 public class VideoViewManager extends SimpleViewManager<VideoView>{
+    private static final int COMMAND_PAUSE_ID = 1;
+    private static final String COMMAND_PAUSE_NAME = "pause";
+    private static final int COMMAND_START_ID = 2;
+    private static final String COMMAND_START_NAME = "start";
+    private static final int COMMAND_SEEK_TO_ID = 3;
+    private static final String COMMAND_SEEK_TO_NAME = "seekTo";
 
     private enum VideoEvent{
         EVENT_PREPARE("onPrepared"),
@@ -64,12 +70,32 @@ public class VideoViewManager extends SimpleViewManager<VideoView>{
     @Nullable
     @Override
     public Map<String, Integer> getCommandsMap() {
-        return super.getCommandsMap();
+        return MapBuilder.of(
+                COMMAND_PAUSE_NAME,COMMAND_PAUSE_ID,
+                COMMAND_START_NAME,COMMAND_START_ID,
+                COMMAND_SEEK_TO_NAME, COMMAND_SEEK_TO_ID
+        );
     }
 
     @Override
     public void receiveCommand(VideoView root, int commandId, @Nullable ReadableArray args) {
-        super.receiveCommand(root, commandId, args);
+        FLog.e(VideoViewManager.class,"receiveCommand id = "+commandId);
+        switch (commandId){
+            case COMMAND_PAUSE_ID://暂停
+                root.pause();
+                break;
+            case COMMAND_START_ID://开始
+                root.start();
+                break;
+            case COMMAND_SEEK_TO_ID://快进
+                if(args != null) {
+                    int msec = args.getInt(0);
+                    root.seekTo(msec);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     @Nullable
@@ -149,7 +175,6 @@ public class VideoViewManager extends SimpleViewManager<VideoView>{
         @Override
         public void onHostPause() {
             FLog.e(VideoViewManager.class,"onHostPause");
-            pause();
         }
 
         @Override
@@ -231,10 +256,12 @@ public class VideoViewManager extends SimpleViewManager<VideoView>{
 
         @Override
         public void run() {
-            int progress = getCurrentPosition();
-            WritableMap event = Arguments.createMap();
-            event.putInt("progress",progress);
-            dispatchEvent(VideoEvent.EVENT_PROGRESS.toString(),event);
+            if(isPlaying()) {
+                int progress = getCurrentPosition();
+                WritableMap event = Arguments.createMap();
+                event.putInt("progress", progress);
+                dispatchEvent(VideoEvent.EVENT_PROGRESS.toString(), event);
+            }
             mHandler.postDelayed(this,1000);
         }
 
