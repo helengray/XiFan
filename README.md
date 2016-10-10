@@ -5,6 +5,7 @@
 - View\Text\Image\ViewPager\Navigator\TouchableOpacity等控件的使用
 - 如何动态渲染\添加组件
 - 应用的页面跳转
+- TabView选项卡的实现
 - 原生自定义模块开发（RN调用原生横竖屏设置）
 - 原生自定义UI组件开发（RN调用原生播放器VideoView）
 
