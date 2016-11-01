@@ -9,11 +9,15 @@ import {
 	TouchableOpacity,
 	ViewPagerAndroid,
 	Picker,
-	ToastAndroid
+	ToastAndroid,
+	TouchableWithoutFeedback
 } from 'react-native';
 import Cheerio from 'cheerio';
 import TitleBar from './component/TitleBarComponent.android';
 import VideoPlayScene from './VideoPlayScene';
+import SQLite from './db/SQLite';
+var sqlite = new SQLite();
+import Movie from './db/Movie';
 const HOST_URL = 'http://m.y3600.com/78/';
 //this.state={
 // 	tabIndex:0,
@@ -36,6 +40,7 @@ export default class DramaDetailScene extends Component{
 	constructor(props){
 		super(props);
 		this.state={
+			isCollection:false,
 			tabIndex:0,
 			loaded:false,
 			desc:'',//简介
@@ -48,6 +53,13 @@ export default class DramaDetailScene extends Component{
 	}
 
 	componentDidMount(){
+		sqlite.findCollectionByName(this.props.data.name).then((result)=>{
+			if(result){
+				this.setState({
+					isCollection:true,
+				});
+			}
+		}).catch((e)=>{}).done();
 		this._fetchData(this.props.data.url);
 	}
 
@@ -373,10 +385,17 @@ console.log('video player url = '+url);
 							<Text style={{fontSize:12}} >来源：</Text>
 							{sourceListView}
 						</View>
-						<TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={this._onPlayVideoPress.bind(this)}>
-							<Image style={{height:18,width:18}} source={require('../img/icon_video_play.png')}/>
-							<Text style={{color:'white',fontSize:14}}>播放</Text>
-						</TouchableOpacity>
+						<View style={{flexDirection:'row',alignItems:'center',marginTop:30,}}>
+							<TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={this._onPlayVideoPress.bind(this)}>
+								<Image style={{height:18,width:18}} source={require('../img/icon_video_play.png')}/>
+								<Text style={{color:'white',fontSize:14}}>播放</Text>
+							</TouchableOpacity>
+							<TouchableWithoutFeedback onPress={this._onCollectionPress.bind(this,this.props.data)}>
+								<Image
+									style={{height:25,width:25,marginLeft:12}}
+									source={this.state.isCollection?require('../img/icon_collection_true.png'):require('../img/icon_collection_normal.png')}/>
+							</TouchableWithoutFeedback>
+						</View>
 					</View>
 				</View>
 				<View style={styles.centerContainer}>
@@ -451,6 +470,56 @@ console.log('video player url = '+url);
 			ToastAndroid.show("暂无播放信息",ToastAndroid.SHORT);
 		}
 	}
+	//收藏
+	_onCollectionPress(movie){
+		console.log(movie);
+		/*{ name: '信义',
+			title: '全集中字',
+			actor: '金喜善,李敏镐,刘德焕,朴世英,李必立,沈恩京,成勋,李民浩',
+			pic: 'http://img.y3600.com/d/file/p/2016/10/26/40d39df617fc663a21f1e433e67742de.jpg',
+			url: '/hanju/2016/958.html' }*/
+		var isCollection = !this.state.isCollection;
+		if(isCollection){//保存
+			var coll = new Movie();
+			coll.setName(movie.name);
+			coll.setActor(movie.actor);
+			coll.setPic(movie.pic);
+			coll.setUrl(movie.url);
+			coll.setTitle(movie.title);
+			var date = new Date();
+			var time=date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()+' ';
+			var hours = date.getHours();
+			if(hours < 9){
+				time = time+'0'+hours+':';
+			}else {
+				time = time+hours+':';
+			}
+			var minutes = date.getMinutes();
+			if(minutes < 9){
+				time = time+'0'+minutes+':';
+			}else {
+				time = time+minutes+':';
+			}
+			var sec = date.getSeconds();
+			if(sec < 9){
+				time = time+'0'+sec;
+			}else {
+				time = time+sec;
+			}
+			coll.setTime(time);
+			sqlite.saveCollection(coll).then(()=>{
+				this.setState({
+					isCollection:isCollection,
+				});
+			}).catch((e)=>{}).done();
+		}else {//删除
+			sqlite.deleteCollectionByName(this.props.data.name).then(()=>{
+				this.setState({
+					isCollection:isCollection,
+				})
+			}).catch((e)=>{}).done();
+		}
+	}
 }
 
 var styles = StyleSheet.create({
@@ -515,7 +584,6 @@ var styles = StyleSheet.create({
 		borderRadius:10,
 		borderWidth:1,
 		borderColor:'transparent',
-		marginTop:30,
 	},
 	buttonSelect:{
 		height:25,

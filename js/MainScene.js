@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import HomeScene from './HomeScene'
 import MyScene from './MyScene';
+import SQLite from './db/SQLite';
+var sqLite = new SQLite();
 //首页
 export default class MainScene extends Component{
 	constructor(props){
@@ -25,10 +27,12 @@ export default class MainScene extends Component{
 
 	componentDidMount(){
 		this._addBackAndroidListener(this.props.navigator);
+		sqLite.createTable();
 	}
 
 	componentWillUnmount(){
 		this._removeBackAndroidListener();
+		sqLite.close();
 	}
 
 	//监听Android返回键
@@ -60,6 +64,10 @@ export default class MainScene extends Component{
 	    }  
 	}
 
+	_createTable(){
+
+	}
+
 	render(){
 		// <ViewPagerAndroid 
 				// 	style={{flex:1}} 
@@ -74,7 +82,7 @@ export default class MainScene extends Component{
 				// 		<MyScene />
 				// 	</View>
 				// </ViewPagerAndroid>
-		var page = this.state.tabIndex===0?<HomeScene navigator={this.props.navigator}/>:<MyScene />;
+		var page = this.state.tabIndex===0?<HomeScene navigator={this.props.navigator}/>:<MyScene navigator={this.props.navigator}/>;
 		return(
 			<View style={{flex:1,justifyContent:'flex-end'}}>
 				{page}

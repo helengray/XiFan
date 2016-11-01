@@ -9,6 +9,8 @@ import com.facebook.react.shell.MainReactPackage;
 import com.xifan.module.OrientationPackage;
 import com.xifan.module.VideoViewPackage;
 
+import org.pgsqlite.SQLitePluginPackage;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,7 +27,8 @@ public class MainApplication extends Application implements ReactApplication {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
                     new OrientationPackage(),
-                    new VideoViewPackage()
+                    new VideoViewPackage(),
+                    new SQLitePluginPackage()
             );
         }
     };

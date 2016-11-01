@@ -190,7 +190,7 @@ export default class DramaComponent extends Component{
 			<ListView 
 				dataSource = {this.state.movies}
 				renderRow = {this._renderMovieView.bind(this)}
-				style = {styles.listview}
+				style = {styles.list_view}
 				initialListSize = {10}
 				pageSize = {10}
 				onEndReachedThreshold = {5}
@@ -322,7 +322,7 @@ var styles = StyleSheet.create({
   	width:width-20,
   	textAlign:'center',
   },
-  listview:{
+  list_view:{
     backgroundColor:'#f5fcff',
   },
 });
