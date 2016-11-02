@@ -116,7 +116,7 @@ const SQLite = React.createClass({
         });
 
     },
-    listCollection(pageSize,index){
+    listCollection(pageSize,index){//获取收藏记录列表
         return new Promise((resolve, reject)=>{
             if(db){
                 db.executeSql('SELECT * FROM '+Collection_TABLE_NAME +' LIMIT '+pageSize+' OFFSET '+((index-1)*pageSize),[],

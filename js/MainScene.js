@@ -64,8 +64,13 @@ export default class MainScene extends Component{
 	    }  
 	}
 
-	_createTable(){
-
+	renderScene(router, navigator){
+		this.nav = navigator;
+		if(router.name == 'HomeScene'){
+			return <HomeScene navigator={this.props.navigator}/>;
+		}else {
+			return <MyScene navigator={this.props.navigator}/>;
+		}
 	}
 
 	render(){
@@ -82,10 +87,18 @@ export default class MainScene extends Component{
 				// 		<MyScene />
 				// 	</View>
 				// </ViewPagerAndroid>
-		var page = this.state.tabIndex===0?<HomeScene navigator={this.props.navigator}/>:<MyScene navigator={this.props.navigator}/>;
+		//var page = this.state.tabIndex===0?<HomeScene navigator={this.props.navigator}/>:<MyScene navigator={this.props.navigator}/>;
 		return(
 			<View style={{flex:1,justifyContent:'flex-end'}}>
-				{page}
+				<Navigator
+					initialRoute={{name: 'HomeScene'}}
+					configureScene={(route) => {
+						if (route.sceneConfig) {
+							return route.sceneConfig;
+						}
+						return Navigator.SceneConfigs.FadeAndroid;
+					}}
+					renderScene={this.renderScene.bind(this)} />
 				
 				<View style={{backgroundColor:'#d5d5d5',height:1,}}/> 
 				<View style={{height:55,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
@@ -121,6 +134,14 @@ export default class MainScene extends Component{
   		this.setState({
   			tabIndex:index,
   		});
+  		let len = this.nav.getCurrentRoutes().length;
+		if(len <2 && index ==1){
+			this.nav.push({
+				name:'MyScene'
+			});
+		}else {
+			this.nav.jumpTo(this.nav.getCurrentRoutes()[index]);
+		}
   	}
 }
 
