@@ -22,6 +22,14 @@ export default class TitleBarComponent extends Component{
 		hasMore:false,
 	};
 
+	static propTypes = {
+		title:React.PropTypes.string,
+		subtitle:React.PropTypes.string,
+		subScene:React.PropTypes.bool,
+		hasMore:React.PropTypes.bool,
+		onActionSelected:React.PropTypes.func,
+	};
+
 	render() {
 		var actions = this.props.hasMore?toolbarActions:[];
 		return(
@@ -48,7 +56,10 @@ export default class TitleBarComponent extends Component{
 	}
 
 	_onActionClick(index){
-		switch(index){
+		if(this.props.onActionSelected){
+			this.props.onActionSelected(index);
+		}
+		/*switch(index){
 			case 0:
 				var navigator = this.props.navigator;
 				if(navigator){
@@ -61,7 +72,7 @@ export default class TitleBarComponent extends Component{
 				}
 				break;
 			default:break;
-		}
+		}*/
 //ToastAndroid.show('index = '+index,ToastAndroid.LONG);
 	}
 
@@ -74,4 +85,4 @@ const styles = StyleSheet.create({
 });
 const toolbarActions = [
 	{title:'全部',show:'always',icon:require('../../img/icon_all.png'),showWithText:true}
-]
+];

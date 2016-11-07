@@ -39,7 +39,7 @@ export default class DramaComponent extends Component{
 
 	static propTypes = {
         url: React.PropTypes.string.isRequired,
-    }
+    };
 
     /*static defaultProps = {
         url: '/hanju/new',

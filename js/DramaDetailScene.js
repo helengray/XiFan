@@ -18,6 +18,7 @@ import VideoPlayScene from './VideoPlayScene';
 import SQLite from './db/SQLite';
 var sqlite = new SQLite();
 import Movie from './db/Movie';
+import History from './db/History';
 const HOST_URL = 'http://m.y3600.com/78/';
 //this.state={
 // 	tabIndex:0,
@@ -59,9 +60,10 @@ export default class DramaDetailScene extends Component{
 					isCollection:true,
 				});
 			}
-		}).catch((e)=>{}).done();
+		}).catch((e)=>{});
 		this._fetchData(this.props.data.url);
 	}
+
 
 	_fetchData(url){
 		var s = url.split("/");
@@ -127,15 +129,31 @@ console.log('_fetchData currPlayList = '+JSON.stringify(currPlayList));
 					playList.push($(ul).text());
 				}
 				
-				
-				this.setState({
-					desc:desc,
-					playList:playList,
-					hasStart:hasStart,
-					sourceList:sourceList,
-					currPlayList:currPlayList,
-					loaded:true,
-				});
+				//获取观看历史
+                sqlite.findHistoryByName(this.props.data.name).then((result)=>{
+                    var currSource = result.sourceIndex;
+                    var currPlayList = this.state.currPlayList;
+                    currPlayList[currSource] = result.indexPlay;
+                    this.setState({
+                        desc:desc,
+                        playList:playList,
+                        hasStart:hasStart,
+                        sourceList:sourceList,
+                        currPlayList:currPlayList,
+                        loaded:true,
+                        currSource:currSource,
+                    });
+                }).catch((e)=>{
+                    this.setState({
+                        desc:desc,
+                        playList:playList,
+                        hasStart:hasStart,
+                        sourceList:sourceList,
+                        currPlayList:currPlayList,
+                        loaded:true,
+                    });
+                });
+
 			})
 			.done();
 	}
@@ -152,7 +170,7 @@ console.log('_fetchData currPlayList = '+JSON.stringify(currPlayList));
 			activeOpacity={0.8}
 			onPress={this._onPlayButtonPress.bind(this,key)}
 			>
-				<Text style={{color:'black',fontSize:12,padding:4}}>{text}</Text>
+				<Text style={{color:'black',fontSize:12}}>{text}</Text>
 			</TouchableOpacity>
 			);
 	}
@@ -162,11 +180,12 @@ console.log('_fetchData currPlayList = '+JSON.stringify(currPlayList));
 		var currPlayList = this.state.currPlayList;
 		currPlayList[currSource] = index;
 		this.setState({
-			currPlay:currPlayList,
+            currPlayList:currPlayList,
 		});
 		var playList = this.state.playList[currSource];
 		var playInfo = playList[index];
 		this._play(playInfo);
+		this._saveHistory(currSource,index,playInfo.text);
 	}
 
 	_play(playInfo){
@@ -364,6 +383,7 @@ console.log('video player url = '+url);
 		}else{
 			try{
 				var currSource = this.state.currSource;
+                console.log('render currSource = '+currSource);
 				playList = playList[currSource];
 				var currPlay = this.state.currPlayList[currSource];
 				for (var i = 0; i < playList.length; i++) {
@@ -463,6 +483,7 @@ console.log('video player url = '+url);
 			if(index < playList.length){
 				var playInfo = playList[index];
 				this._play(playInfo);
+				this._saveHistory(currSource,index,playInfo.text);
 			}else {
 				ToastAndroid.show("暂无播放信息",ToastAndroid.SHORT);
 			}
@@ -472,7 +493,6 @@ console.log('video player url = '+url);
 	}
 	//收藏
 	_onCollectionPress(movie){
-		console.log(movie);
 		/*{ name: '信义',
 			title: '全集中字',
 			actor: '金喜善,李敏镐,刘德焕,朴世英,李必立,沈恩京,成勋,李民浩',
@@ -519,6 +539,44 @@ console.log('video player url = '+url);
 				})
 			}).catch((e)=>{}).done();
 		}
+	}
+
+	_saveHistory(currSource,currIndex,text){
+		var movie = this.props.data;
+		var history = new History();
+		history.setTitle(movie.title);
+		history.setName(movie.name);
+		history.setUrl(movie.url);
+		history.setPic(movie.pic);
+		var date = new Date();
+		var time=date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()+' ';
+		var hours = date.getHours();
+		if(hours < 9){
+			time = time+'0'+hours+':';
+		}else {
+			time = time+hours+':';
+		}
+		var minutes = date.getMinutes();
+		if(minutes < 9){
+			time = time+'0'+minutes+':';
+		}else {
+			time = time+minutes+':';
+		}
+		var sec = date.getSeconds();
+		if(sec < 9){
+			time = time+'0'+sec;
+		}else {
+			time = time+sec;
+		}
+		history.setTime(time);
+		history.setSourceIndex(currSource);
+		history.setIndexPlay(currIndex);
+		history.setIndexName(text);
+		sqlite.saveHistory(history).then(()=>{
+
+		}).catch((e)=>{
+
+		});
 	}
 }
 
@@ -597,6 +655,7 @@ var styles = StyleSheet.create({
 		marginBottom:5,
 		marginLeft:5,
 		marginRight:5,
+		padding:4
 	},
 	buttonUnSelect:{
 		height:25,
@@ -610,5 +669,6 @@ var styles = StyleSheet.create({
 		marginBottom:5,
 		marginLeft:5,
 		marginRight:5,
+		padding:4,
 	}
 });

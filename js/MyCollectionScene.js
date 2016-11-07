@@ -72,7 +72,8 @@ export default class MyCollectionScene extends Component{
     }
 
     _onEndReached(){
-
+        index ++;
+        this._queryData();
     }
 
     _onRefresh(){
@@ -82,9 +83,8 @@ export default class MyCollectionScene extends Component{
     }
 
     _queryData(){
-        sqlite.listCollection(15,index).then((results)=>{
+        sqlite.listCollection(10,index).then((results)=>{
             datas = datas.concat(results);
-            console.log(datas);
             this.setState({
                 movies:this.state.movies.cloneWithRows(datas),
                 isRefreshing:false
@@ -108,7 +108,6 @@ export default class MyCollectionScene extends Component{
                 onEndReachedThreshold={5}
                 onEndReached={this._onEndReached.bind(this)}
                 enableEmptySections={true}
-                //contentContainerStyle = {styles.grid}
                 refreshControl={
                     <RefreshControl
                         refreshing={this.state.isRefreshing}
