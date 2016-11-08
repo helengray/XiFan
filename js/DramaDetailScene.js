@@ -10,7 +10,8 @@ import {
 	ViewPagerAndroid,
 	Picker,
 	ToastAndroid,
-	TouchableWithoutFeedback
+	TouchableWithoutFeedback,
+	InteractionManager
 } from 'react-native';
 import Cheerio from 'cheerio';
 import TitleBar from './component/TitleBarComponent.android';
@@ -54,14 +55,9 @@ export default class DramaDetailScene extends Component{
 	}
 
 	componentDidMount(){
-		sqlite.findCollectionByName(this.props.data.name).then((result)=>{
-			if(result){
-				this.setState({
-					isCollection:true,
-				});
-			}
-		}).catch((e)=>{});
-		this._fetchData(this.props.data.url);
+		InteractionManager.runAfterInteractions(()=>{
+			this._fetchData(this.props.data.url);
+		});
 	}
 
 
@@ -124,7 +120,7 @@ console.log('_fetchData currPlayList = '+JSON.stringify(currPlayList));
 					});
 				}else{
 					hasStart = false;
-					var ul = $('ul.coming');
+					ul = $('ul.coming');
 					ul.find('h5').remove();
 					playList.push($(ul).text());
 				}
@@ -134,24 +130,64 @@ console.log('_fetchData currPlayList = '+JSON.stringify(currPlayList));
                     var currSource = result.sourceIndex;
                     var currPlayList = this.state.currPlayList;
                     currPlayList[currSource] = result.indexPlay;
-                    this.setState({
-                        desc:desc,
-                        playList:playList,
-                        hasStart:hasStart,
-                        sourceList:sourceList,
-                        currPlayList:currPlayList,
-                        loaded:true,
-                        currSource:currSource,
-                    });
+					sqlite.findCollectionByName(this.props.data.name).then((result)=>{
+						console.log('findHistoryByName-findCollectionByName render');
+						var isCollection = false;
+						if(result){
+							isCollection = true;
+						}
+						this.setState({
+							desc:desc,
+							playList:playList,
+							hasStart:hasStart,
+							sourceList:sourceList,
+							currPlayList:currPlayList,
+							loaded:true,
+							currSource:currSource,
+							isCollection:isCollection,
+						});
+					}).catch((err)=>{
+						console.log('findHistoryByName-findCollectionByName-error render');
+						this.setState({
+							desc:desc,
+							playList:playList,
+							hasStart:hasStart,
+							sourceList:sourceList,
+							currPlayList:currPlayList,
+							loaded:true,
+							currSource:currSource,
+							isCollection:false,
+						});
+					});
                 }).catch((e)=>{
-                    this.setState({
-                        desc:desc,
-                        playList:playList,
-                        hasStart:hasStart,
-                        sourceList:sourceList,
-                        currPlayList:currPlayList,
-                        loaded:true,
-                    });
+					sqlite.findCollectionByName(this.props.data.name).then((result)=>{
+						console.log('findHistoryByName-error-findCollectionByName render');
+						var isCollection = false;
+						if(result){
+							isCollection = true;
+						}
+						this.setState({
+							desc:desc,
+							playList:playList,
+							hasStart:hasStart,
+							sourceList:sourceList,
+							currPlayList:currPlayList,
+							loaded:true,
+							isCollection:isCollection,
+						});
+					}).catch((err)=>{
+						console.log('findHistoryByName-error-findCollectionByName-error render');
+						this.setState({
+							desc:desc,
+							playList:playList,
+							hasStart:hasStart,
+							sourceList:sourceList,
+							currPlayList:currPlayList,
+							loaded:true,
+							isCollection:false,
+						});
+					});
+
                 });
 
 			})
@@ -383,7 +419,6 @@ console.log('video player url = '+url);
 		}else{
 			try{
 				var currSource = this.state.currSource;
-                console.log('render currSource = '+currSource);
 				playList = playList[currSource];
 				var currPlay = this.state.currPlayList[currSource];
 				for (var i = 0; i < playList.length; i++) {
@@ -461,10 +496,12 @@ console.log('video player url = '+url);
 	}
 
 	_onTabPress(index){
-		this.viewPager.setPage(index);
-		this.setState({
-			tabIndex:index,
-		});
+		if(index != this.state.tabIndex){
+			this.viewPager.setPage(index);
+			this.setState({
+				tabIndex:index,
+			});
+		}
 	}
 
 	_onPageSelected(event){
@@ -528,16 +565,22 @@ console.log('video player url = '+url);
 			}
 			coll.setTime(time);
 			sqlite.saveCollection(coll).then(()=>{
+				ToastAndroid.show('收藏成功',ToastAndroid.SHORT);
 				this.setState({
 					isCollection:isCollection,
 				});
-			}).catch((e)=>{}).done();
+			}).catch((e)=>{
+				ToastAndroid.show('收藏失败',ToastAndroid.SHORT);
+			}).done();
 		}else {//删除
 			sqlite.deleteCollectionByName(this.props.data.name).then(()=>{
+				ToastAndroid.show('取消收藏成功',ToastAndroid.SHORT);
 				this.setState({
 					isCollection:isCollection,
 				})
-			}).catch((e)=>{}).done();
+			}).catch((e)=>{
+				ToastAndroid.show('取消收藏失败',ToastAndroid.SHORT);
+			}).done();
 		}
 	}
 
