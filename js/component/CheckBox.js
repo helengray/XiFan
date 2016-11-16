@@ -12,6 +12,9 @@ export default class CheckBox extends Component {
         super(props);
         this.state = {
             isChecked: this.props.isChecked,
+        };
+        if (this.props.onChange) {
+            this.props.onChange(this.props.id, this.props.isChecked);
         }
     }
 
@@ -33,9 +36,14 @@ export default class CheckBox extends Component {
     }
 
     check(isChecked){
-        this.setState({
-            isChecked: isChecked
-        });
+        if(isChecked != this.state.isChecked) {
+            this.setState({
+                isChecked: isChecked
+            });
+            if (this.props.onChange) {
+                this.props.onChange(this.props.id, isChecked);
+            }
+        }
     }
 
     render() {
@@ -44,12 +52,7 @@ export default class CheckBox extends Component {
                 style={this.props.style}
                 onPress={()=>{
                     var isChecked = !this.state.isChecked;
-                    this.setState({
-                        isChecked: isChecked
-                    });
-                    if(this.props.onChange){
-                        this.props.onChange(this.props.id,isChecked);
-                    }
+                    this.check(isChecked);
                 }}
                 underlayColor='transparent'
             >
@@ -62,13 +65,13 @@ export default class CheckBox extends Component {
 
     _renderImage() {
         if (this.state.isChecked) {
-            return this.props.checkedImage ? this.props.checkedImage : this.genCheckedImage();
+            return this.props.checkedImage ? this.props.checkedImage : this.getCheckedImage();
         } else {
-            return this.props.unCheckedImage ? this.props.unCheckedImage : this.genCheckedImage();
+            return this.props.unCheckedImage ? this.props.unCheckedImage : this.getCheckedImage();
         }
     }
 
-    genCheckedImage() {
+    getCheckedImage() {
         var source = this.state.isChecked ? require('../../img/icon_check.png') : require('../../img/icon_no_check.png');
 
         return (

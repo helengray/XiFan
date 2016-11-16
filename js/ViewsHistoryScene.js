@@ -18,7 +18,9 @@ var index = 1;
 var datas = [];
 var hasChange = false;
 var toDeleteIds = [];
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 10;
+const CheckBoxName = 'CheckBox';
+var CheckBoxRefs = {};//存放item checkbox ref
 export default class ViewsHistoryScene extends Component{
     constructor(props){
         super(props);
@@ -30,12 +32,14 @@ export default class ViewsHistoryScene extends Component{
             }),
             isRefreshing:false,
             isDeleteMode:false,
+            isAllSelect:false,//是否全选
         }
     }
 
     componentDidMount(){
         datas = [];
         index = 1;
+        CheckBoxRefs = {};
         this._queryData();
     }
 
@@ -70,20 +74,23 @@ export default class ViewsHistoryScene extends Component{
     /**
      * 复选框
      */
-    _renderCheckbox(key){
+    _renderCheckbox(key){//使用数据id作为key
         var checkbox = null;
         if(this.state.isDeleteMode){
             checkbox = (
                 <CheckBox
+                    ref={(checkbox)=>{
+                        CheckBoxRefs[`${CheckBoxName}${key}`] = checkbox;
+                    }}
                     id = {key}
                     style={{marginRight:12}}
-                    isChecked={false}
+                    isChecked={this.state.isAllSelect}
                     onChange={(id,isChecked)=>{
                         if(isChecked){
                             toDeleteIds.push(id);
                         }else {
                             var index = toDeleteIds.indexOf(id);
-                            if(index > 0){
+                            if(index >= 0){
                                 toDeleteIds.splice(index,1);
                             }
                         }
@@ -102,6 +109,12 @@ export default class ViewsHistoryScene extends Component{
             return (
                 <View style={{flexDirection:'row'}}>
                     <TouchableOpacity
+                        style={{height:35,flex:1,backgroundColor:'#ff5722',alignItems:'center',justifyContent:'center'}}
+                        activeOpacity={0.8}
+                        onPress={this._selectAll.bind(this)}>
+                        <Text style={{color:'white',fontSize:16}}>全选/反选</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
                         style={{height:35,flex:1,backgroundColor:'#aaaaaa',alignItems:'center',justifyContent:'center'}}
                         activeOpacity={0.8}
                         onPress={this._onCancelPress.bind(this)}>
@@ -119,23 +132,41 @@ export default class ViewsHistoryScene extends Component{
         return null;
     }
 
+    _selectAll(){
+        this.setState({
+            isAllSelect:!this.state.isAllSelect,
+        });
+        for (var key in CheckBoxRefs){
+            var item = CheckBoxRefs[key];
+            if(item){
+                item.check(!item.isCheck());
+            }else {
+                delete CheckBoxRefs[key];
+            }
+        }
+    }
+
     _onCancelPress(){
         hasChange = true;
         this.setState({
             movies:this.state.movies.cloneWithRows(datas),
             isDeleteMode:false,
+            isAllSelect:false,
         });
         //清空
         toDeleteIds = [];
     }
 
     _onDeletePress(){
+        //console.log(JSON.stringify(toDeleteIds));
         if(toDeleteIds.length != 0){
             sqlite.deleteHistoryByIds(toDeleteIds)
                 .then(()=>{
                     ToastAndroid.show('删除成功',ToastAndroid.SHORT);
-                    //清空
-                    toDeleteIds = [];
+                    this.setState({
+                        isDeleteMode:false,
+                        isAllSelect:false,
+                    });
                     this._onRefresh();
                 })
                 .catch((err)=>{
@@ -144,7 +175,6 @@ export default class ViewsHistoryScene extends Component{
         }else{
             ToastAndroid.show('请选择删除项',ToastAndroid.SHORT);
         }
-
     }
 
     _onItemPress(movie){
@@ -158,6 +188,11 @@ export default class ViewsHistoryScene extends Component{
                     component: DramaDetailScene
                 });
             }
+        }else {
+            var item = CheckBoxRefs[`${CheckBoxName}${movie.id}`];
+            if(item){
+                item.check(!item.isCheck());
+            }
         }
     }
 
@@ -165,6 +200,8 @@ export default class ViewsHistoryScene extends Component{
         if(!this.state.isDeleteMode){
             hasChange = true;
             this.setState({
+                //一定要调用这个，否则列表不会刷新，ListView.DataSource$rowHasChanged不会被调用
+                //列表是否刷新取决于ListView.DataSource$rowHasChanged的返回值，true表示刷新,false表示不用刷新
                 movies:this.state.movies.cloneWithRows(datas),
                 isDeleteMode:true,
             });
@@ -182,6 +219,7 @@ export default class ViewsHistoryScene extends Component{
     }
 
     _onRefresh(){
+        CheckBoxRefs = {};
         datas = [];
         index = 1;
         this._queryData();
@@ -193,10 +231,10 @@ export default class ViewsHistoryScene extends Component{
             this.setState({
                 movies:this.state.movies.cloneWithRows(datas),
                 isRefreshing:false,
-                isDeleteMode:false,
             });
         }).catch((err)=>{
-
+            console.log(err);
+            ToastAndroid.show('获取数据失败',ToastAndroid.SHORT);
         }).done();
     }
 
@@ -206,7 +244,6 @@ export default class ViewsHistoryScene extends Component{
             page = this._renderEmptyView();
         }else {
             page = (<ListView
-                ref="myListView"
                 dataSource={this.state.movies}
                 renderRow={this._renderMovieView.bind(this)}
                 renderSeparator={(sectionID,rowID)=>{

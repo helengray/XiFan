@@ -9,6 +9,7 @@
 - 原生自定义模块开发（RN调用原生横竖屏设置）
 - 原生自定义UI组件开发（RN调用原生播放器VideoView）
 - react-native-sqlite的使用
+- 复选框CheckBox的实现及CheckBox在ListView列表中的使用（全选功能）
 
 更多信息请访问 [我的博客](http://blog.csdn.net/it_talk),博客里有该项目的实战系列教程。
 
