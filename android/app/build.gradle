@@ -80,11 +80,11 @@ def enableSeparateBuildPerCPUArchitecture = false
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
  */
-def enableProguardInReleaseBuilds = true
+def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         applicationId "com.xifan"
@@ -104,7 +104,6 @@ android {
             keyPassword MYAPP_RELEASE_KEY_PASSWORD
         }
     }
-
     splits {
         abi {
             reset()
@@ -133,9 +132,6 @@ android {
             }
         }
     }
-    lintOptions{
-        abortOnError false
-    }
 }
 
 dependencies {
@@ -148,6 +144,6 @@ dependencies {
 // Run this once to be able to run the application with BUCK
 // puts all compile dependencies into folder libs for BUCK to use
 task copyDownloadableDepsToLibs(type: Copy) {
-  from configurations.compile
-  into 'libs'
+    from configurations.compile
+    into 'libs'
 }
