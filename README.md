@@ -13,8 +13,7 @@
 
 更多信息请访问 [我的博客](http://blog.csdn.net/it_talk),博客里有该项目的实战系列教程。
 
-![效果图](https://github.com/helengray/XiFan/raw/master/xifan.gif)
-
+![效果图](https://github.com/helengray/XiFan/raw/master/xifan.gif)![效果图](https://github.com/helengray/XiFan/raw/master/xifan2.gif)
 ## 注意
 node_modules 没有上传，要自己执行npm install。
 
