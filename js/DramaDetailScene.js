@@ -13,7 +13,7 @@ import {
 	TouchableWithoutFeedback,
 	InteractionManager
 } from 'react-native';
-import Cheerio from 'cheerio';
+import Cheerio from 'cheerio-without-node-native';
 import TitleBar from './component/TitleBarComponent.android';
 import VideoPlayScene from './VideoPlayScene';
 import SQLite from './db/SQLite';

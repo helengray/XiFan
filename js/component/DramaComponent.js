@@ -10,7 +10,7 @@ import {
 	TouchableOpacity,
 	ToolbarAndroid,
 } from 'react-native';
-import Cheerio from 'cheerio';
+import Cheerio from 'cheerio-without-node-native';
 import DramaDetailScene from '../DramaDetailScene';
 
 const HOST_URL = 'http://www.y3600.com';

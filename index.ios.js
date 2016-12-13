@@ -4,6 +4,28 @@
  * @flow
  */
 
+// import React, { Component } from 'react';
+// import {
+//     AppRegistry,
+//     Navigator,
+//
+// } from 'react-native';
+//
+// import MainScene from './js/MainScene';
+// import AppNavigator from './js/component/AppNavigator';
+//
+// class XiFan extends Component {
+//
+//     render(){
+//         return(
+//             <AppNavigator id='MainScene' data='' name='' component={MainScene}/>
+//         );
+//     }
+// }
+
+
+//AppRegistry.registerComponent('XiFan', () => XiFan);
+
 import React, { Component } from 'react';
 import {
   AppRegistry,
