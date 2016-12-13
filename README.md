@@ -14,6 +14,7 @@
 更多信息请访问 [我的博客](http://blog.csdn.net/it_talk),博客里有该项目的实战系列教程。
 
 ![效果图](https://github.com/helengray/XiFan/raw/master/xifan.gif)
+
 ![效果图](https://github.com/helengray/XiFan/raw/master/xifan2.gif)
 ## 注意
 node_modules 没有上传，要自己执行npm install。
@@ -21,7 +22,7 @@ node_modules 没有上传，要自己执行npm install。
 用到的module：
 - react@15.4.1
 - react-native@0.38.0
-- cheerio@0.20.0
+- cheerio-without-node-native@0.20.2
 - events@1.1.1
 - react-native-sqlite-storage@3.1.2
 
@@ -35,7 +36,7 @@ npm install react@15.4.1
 npm install react-native@0.38.0
 ```
 ```
-npm install cheerio@0.20.0
+npm install cheerio-without-node-native@0.20.2
 ```
 ```
 npm install events@1.1.1
@@ -51,3 +52,5 @@ react-native run-android
 
 ## TODO
 目前项目只支持Android，将来可能会适配IOS
+
+适配IOS ing...
