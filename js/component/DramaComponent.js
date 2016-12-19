@@ -269,7 +269,7 @@ export default class DramaComponent extends Component{
 	  			navigator.push({
 	  				id:'DramaDetailScene',
 	  				data:movie,
-	  				name:movie.name,
+	  				title:movie.name,
 	  				component:DramaDetailScene
 	  			});
 	  		}

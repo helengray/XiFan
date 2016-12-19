@@ -6,7 +6,6 @@ import {
 	StyleSheet,
 	TouchableOpacity
 } from 'react-native';
-import TitleBar from './component/TitleBarComponent';
 import MyCollectionScene from './MyCollectionScene';
 import ViewsHistoryScene from './ViewsHistoryScene';
 export default class MyScene extends Component{
@@ -18,14 +17,14 @@ export default class MyScene extends Component{
 			case 0:
 				component = {
 					id:'MyCollectionScene',
-					name:'我的收藏',
+					title:'我的收藏',
 					component:MyCollectionScene
 				};
 				break;
 			case 1:
 				component = {
 					id:'ViewsHistoryScene',
-					name:'观看历史',
+					title:'观看历史',
 					component:ViewsHistoryScene
 				};
 				break;
@@ -39,7 +38,6 @@ export default class MyScene extends Component{
 	render(){
 		return(
 			<View style={{flex:1}}>
-				<TitleBar title="我的" subScene={false}/>
 				<TouchableOpacity activeOpacity={0.6} onPress={this._onPress.bind(this,0)}>
 					<View style={styles.item}>
 						<Image style={styles.image} source={require('../img/icon_collection.png')}/>
@@ -65,6 +63,7 @@ const styles = StyleSheet.create({
 		paddingRight:12,
 		backgroundColor:'white',
 		alignItems:'center',
+		marginTop:10,
 	},
 	image:{
 		height:30,

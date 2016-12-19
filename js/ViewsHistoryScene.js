@@ -10,7 +10,6 @@ import {
     ToastAndroid
 } from 'react-native';
 import CheckBox from './component/CheckBox';
-import TitleBar from './component/TitleBarComponent';
 import DramaDetailScene from './DramaDetailScene';
 import SQLite from './db/SQLite';
 var sqlite = new SQLite();
@@ -184,7 +183,7 @@ export default class ViewsHistoryScene extends Component{
                 navigator.push({
                     id: 'DramaDetailScene',
                     data: movie,
-                    name: movie.name,
+                    title: movie.name,
                     component: DramaDetailScene
                 });
             }
@@ -267,7 +266,6 @@ export default class ViewsHistoryScene extends Component{
         }
         return(
             <View style={{flex:1}}>
-                <TitleBar title={this.props.name} subtitle='' subScene={true} hasMore={false} navigator={this.props.navigator}/>
                 {page}
                 {this._renderOptView()}
             </View>

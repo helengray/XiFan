@@ -14,7 +14,6 @@ import {
 	InteractionManager
 } from 'react-native';
 import Cheerio from 'cheerio-without-node-native';
-import TitleBar from './component/TitleBarComponent.android';
 import VideoPlayScene from './VideoPlayScene';
 import SQLite from './db/SQLite';
 var sqlite = new SQLite();
@@ -344,7 +343,7 @@ console.log('id = '+id);
 console.log('video player url = '+url);
 		this.props.navigator.push({
 			id:'VideoPlayScene',
-			name:'',
+			title:'',
 			data:{
 				type:type,
 				url:url,
@@ -385,7 +384,6 @@ console.log('video player url = '+url);
 	_renderLoadingView(){
 	    return(
 	    	<View style={styles.container}>
-				<TitleBar title={this.props.name} subtitle='' subScene={true} navigator={this.props.navigator}/>
 		        <View style = {{flex:1,justifyContent:'center',alignItems:'center'}}>
 		        	<Text>加载中，请稍后...</Text>
 		        </View>
@@ -427,7 +425,6 @@ console.log('video player url = '+url);
 		
 		return(
 			<View style={styles.container}>
-				<TitleBar title={this.props.name} subtitle='' subScene={true} navigator={this.props.navigator}/>
 				<View style={styles.topContainer}>
 					<Image style={styles.image} source={{uri:this.props.data.pic}}/>
 					<View style={styles.topRightContainer}>

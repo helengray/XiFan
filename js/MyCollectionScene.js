@@ -9,7 +9,7 @@ import {
     RefreshControl,
 } from 'react-native';
 import DramaDetailScene from './DramaDetailScene';
-import TitleBar from './component/TitleBarComponent';
+
 import SQLite from './db/SQLite';
 var sqlite = new SQLite();
 var index = 1;
@@ -65,7 +65,7 @@ export default class MyCollectionScene extends Component{
             navigator.push({
                 id:'DramaDetailScene',
                 data:movie,
-                name:movie.name,
+                title:movie.name,
                 component:DramaDetailScene
             });
         }
@@ -120,7 +120,6 @@ export default class MyCollectionScene extends Component{
         }
         return(
             <View style={{flex:1}}>
-                <TitleBar title={this.props.name} subtitle='' subScene={true} navigator={this.props.navigator}/>
                 {page}
             </View>
         );

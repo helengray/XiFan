@@ -9,7 +9,6 @@ import {
 	Navigator,
 	BackAndroid,
 } from 'react-native';
-import TitleBar from './component/TitleBarComponent'
 import DramaComponent from './component/DramaComponent'
 
 //首页
@@ -24,9 +23,9 @@ export default class HomeScene extends Component{
 
 
 	render(){
+		/*<TitleBar title='首页' subtitle='看韩剧,上稀饭' subScene={false} navigator={this.props.navigator} hasMore={false}/>*/
 		return(
 			<View style={{flex:1}} key='HomeScene'>
-				<TitleBar title='首页' subtitle='看韩剧,上稀饭' subScene={false} navigator={this.props.navigator} hasMore={false}/>
 				<View style={{height:35,flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:'#ff5722'}}>
 					<View style={{flex:1}}>
 						<TouchableOpacity style={{flex:1,justifyContent:'center'}} activeOpacity={0.6} onPress={this._onTabPress.bind(this,0)}>
@@ -41,9 +40,9 @@ export default class HomeScene extends Component{
 							<View style={this.state.tabIndex===0?styles.TabUnderlineUnSelect:styles.TabUnderlineSelect}/>
 					</View>
 				</View>
-				<ViewPagerAndroid 
-					style={{flex:1}} 
-					initialPage={0} 
+				<ViewPagerAndroid
+					style={{flex:1}}
+					initialPage={0}
 					onPageSelected={this._onPageSelected.bind(this)}
 					scrollEnabled={true}
 					pageMargin={0}
