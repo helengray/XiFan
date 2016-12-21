@@ -11,6 +11,8 @@ import {
 	BackAndroid,
 } from 'react-native';
 
+import XTabBar from './component/XTabBar';
+import ScrollableTabView from 'react-native-scrollable-tab-view';
 import Toast from './component/Toast';
 import HomeScene from './HomeScene'
 import MyScene from './MyScene';
@@ -65,71 +67,26 @@ export default class MainScene extends Component{
 	    }  
 	}
 
-	renderScene(router, navigator){
-		this.nav = navigator;
-		if(router.name == 'HomeScene'){
-			return <HomeScene navigator={this.props.navigator}/>;
-		}else {
-			return <MyScene navigator={this.props.navigator}/>;
-		}
-	}
 
 	render(){
 		return(
-			<View style={{flex:1,justifyContent:'flex-end'}}>
-				<Navigator
-					initialRoute={{name: 'HomeScene'}}
-					configureScene={(route) => {
-						if (route.sceneConfig) {
-							return route.sceneConfig;
-						}
-						return Navigator.SceneConfigs.FadeAndroid;
-					}}
-					renderScene={this.renderScene.bind(this)} />
-				
-				<View style={{backgroundColor:'#d5d5d5',height:1,}}/> 
-				<View style={{height:55,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-					<TouchableOpacity style={{flex:1}} activeOpacity={0.6} onPress={this._onTabPress.bind(this,0)}>
-						<View style={styles.ItemView}>
-							<Image 
-								style={{height:30,width:30}} 
-								source={this.state.tabIndex==0?require('../img/icon_home_select.png'):require('../img/icon_home_unselect.png')}
-							/>
-							<Text style={this.state.tabIndex==0?styles.TabTextSelect:styles.TabTextUnSelect}>首页</Text>
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity style={{flex:1}} activeOpacity={0.6} onPress={this._onTabPress.bind(this,1)}>
-						<View style={styles.ItemView}>
-							<Image 
-								style={{height:30,width:30}} 
-								source={this.state.tabIndex==0?require('../img/icon_my_unselect.png'):require('../img/icon_my_select.png')}
-							/>
-							<Text style={this.state.tabIndex==0?styles.TabTextUnSelect:styles.TabTextSelect}>我的</Text>
-						</View>
-					</TouchableOpacity>
-				</View>
-				
-			</View>
-			
+			<ScrollableTabView
+				initialPage={0}
+				tabBarPosition="bottom"
+				renderTabBar={()=>
+				<XTabBar
+					activeTextColor="#ff5722"
+					inactiveTextColor="#d5d5d5"
+					activeIcons={[require('../img/icon_home_select.png'),require('../img/icon_my_select.png')]}
+					inactiveIcons={[require('../img/icon_home_unselect.png'),require('../img/icon_my_unselect.png')]}
+					/>
+				}>
+				<HomeScene tabLabel="首页" navigator={this.props.navigator}/>
+				<MyScene tabLabel="我的" navigator={this.props.navigator}/>
+			</ScrollableTabView>
 			);
 	}
 
-	//tab点击事件
-  	_onTabPress(index){
-//console.log('index = '+ index);
-  		//this.viewPager.setPage(index);
-  		this.setState({
-  			tabIndex:index,
-  		});
-  		let len = this.nav.getCurrentRoutes().length;
-		if(len <2 && index ==1){
-			this.nav.push({
-				name:'MyScene'
-			});
-		}else {
-			this.nav.jumpTo(this.nav.getCurrentRoutes()[index]);
-		}
-  	}
 }
 
 var styles = StyleSheet.create({
