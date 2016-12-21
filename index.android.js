@@ -6,19 +6,15 @@
 
 import React, { Component } from 'react';
 import {
-  AppRegistry,
-  Navigator,
-  
+    AppRegistry
 } from 'react-native';
-
-import MainScene from './js/MainScene';
-import AppNavigator from './js/component/AppNavigator';
+import App from './App';
 
 class XiFan extends Component {
 
   render(){
     return(
-      <AppNavigator id='MainScene' data='' name='' component={MainScene}/>
+      <App/>
       );
   }
 }
