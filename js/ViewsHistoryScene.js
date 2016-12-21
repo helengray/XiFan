@@ -7,11 +7,13 @@ import {
     TouchableOpacity,
     ListView,
     RefreshControl,
-    ToastAndroid
 } from 'react-native';
+
+import Toast from './component/Toast';
 import CheckBox from './component/CheckBox';
 import DramaDetailScene from './DramaDetailScene';
 import SQLite from './db/SQLite';
+
 var sqlite = new SQLite();
 var index = 1;
 var datas = [];
@@ -161,7 +163,7 @@ export default class ViewsHistoryScene extends Component{
         if(toDeleteIds.length != 0){
             sqlite.deleteHistoryByIds(toDeleteIds)
                 .then(()=>{
-                    ToastAndroid.show('删除成功',ToastAndroid.SHORT);
+                    ToastAndrToastoid.show('删除成功');
                     this.setState({
                         isDeleteMode:false,
                         isAllSelect:false,
@@ -172,7 +174,7 @@ export default class ViewsHistoryScene extends Component{
                     this._onCancelPress();
                 }).done();
         }else{
-            ToastAndroid.show('请选择删除项',ToastAndroid.SHORT);
+            Toast.show('请选择删除项');
         }
     }
 
@@ -233,7 +235,7 @@ export default class ViewsHistoryScene extends Component{
             });
         }).catch((err)=>{
             console.log(err);
-            ToastAndroid.show('获取数据失败',ToastAndroid.SHORT);
+            Toast.show('获取数据失败');
         }).done();
     }
 

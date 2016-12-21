@@ -9,8 +9,9 @@ import {
 	TouchableOpacity,
 	Image,
 	BackAndroid,
-	ToastAndroid,
 } from 'react-native';
+
+import Toast from './component/Toast';
 import HomeScene from './HomeScene'
 import MyScene from './MyScene';
 import SQLite from './db/SQLite';
@@ -46,7 +47,7 @@ export default class MainScene extends Component{
       				var nowTime = (new Date()).valueOf();
                     if(nowTime - currTime > 2000){
                         currTime = nowTime;
-                        ToastAndroid.show("再按一次退出程序",ToastAndroid.SHORT);
+                        Toast.show("再按一次退出程序");
                         return true;
                     }
       				return false;
@@ -74,20 +75,6 @@ export default class MainScene extends Component{
 	}
 
 	render(){
-		// <ViewPagerAndroid
-				// 	style={{flex:1}}
-				// 	initialPage={0}
-				// 	scrollEnabled={false}
-				// 	ref={(viewPager)=>{this.viewPager = viewPager}}
-				// >
-				// 	<View style={{flex:1}}>
-				// 		<HomeScene navigator={this.props.navigator}/>
-				// 	</View>
-				// 	<View style={{flex:1}}>
-				// 		<MyScene />
-				// 	</View>
-				// </ViewPagerAndroid>
-		//var page = this.state.tabIndex===0?<HomeScene navigator={this.props.navigator}/>:<MyScene navigator={this.props.navigator}/>;
 		return(
 			<View style={{flex:1,justifyContent:'flex-end'}}>
 				<Navigator

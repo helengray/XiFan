@@ -72714,6 +72714,7 @@ var _reactNative=require(42 /* react-native */);
 
 
 
+var _Toast=require(636 /* ./component/Toast */);var _Toast2=babelHelpers.interopRequireDefault(_Toast);
 var _HomeScene=require(551 /* ./HomeScene */);var _HomeScene2=babelHelpers.interopRequireDefault(_HomeScene);
 var _MyScene=require(622 /* ./MyScene */);var _MyScene2=babelHelpers.interopRequireDefault(_MyScene);
 var _SQLite=require(614 /* ./db/SQLite */);var _SQLite2=babelHelpers.interopRequireDefault(_SQLite);
@@ -72749,7 +72750,7 @@ if(routers.length==1){
 var nowTime=new Date().valueOf();
 if(nowTime-currTime>2000){
 currTime=nowTime;
-_reactNative.ToastAndroid.show("再按一次退出程序",_reactNative.ToastAndroid.SHORT);
+_Toast2.default.show("再按一次退出程序");
 return true;
 }
 return false;
@@ -72777,20 +72778,6 @@ return _react2.default.createElement(_MyScene2.default,{navigator:this.props.nav
 }},{key:'render',value:function render()
 
 {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 return(
 _react2.default.createElement(_reactNative.View,{style:{flex:1,justifyContent:'flex-end'}},
 _react2.default.createElement(_reactNative.Navigator,{
@@ -72867,6 +72854,27 @@ textAlign:'center',
 alignItems:'center',
 color:'#d5d5d5'}});
 }, 550, null, "XiFan/js/MainScene.js");
+__d(/* XiFan/js/component/Toast.ios.js */function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});var _react=require(12 /* react */);var _react2=babelHelpers.interopRequireDefault(_react);
+var _reactNative=require(42 /* react-native */);
+
+
+
+
+
+
+
+
+
+
+
+var Toast={
+show:function show(message){
+_reactNative.AlertIOS.alert("提示",message,[{text:"确定"}]);
+}};exports.default=
+
+
+Toast;
+}, 636, null, "XiFan/js/component/Toast.ios.js");
 __d(/* XiFan/js/HomeScene.js */function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});var _react=require(12 /* react */);var _react2=babelHelpers.interopRequireDefault(_react);
 var _reactNative=require(42 /* react-native */);
 
@@ -97859,27 +97867,6 @@ marginLeft:5,
 marginRight:5,
 padding:4}});
 }, 606, null, "XiFan/js/DramaDetailScene.js");
-__d(/* XiFan/js/component/Toast.ios.js */function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});var _react=require(12 /* react */);var _react2=babelHelpers.interopRequireDefault(_react);
-var _reactNative=require(42 /* react-native */);
-
-
-
-
-
-
-
-
-
-
-
-var Toast={
-show:function show(message){
-_reactNative.AlertIOS.alert("提示",message,[{text:"确定"}]);
-}};exports.default=
-
-
-Toast;
-}, 636, null, "XiFan/js/component/Toast.ios.js");
 __d(/* react-native-scrollable-tab-view/index.js */function(global, require, module, exports) {var React=require(12 /* react */);var
 
 PropTypes=
@@ -100442,9 +100429,11 @@ var _reactNative=require(42 /* react-native */);
 
 
 
+var _Toast=require(636 /* ./component/Toast */);var _Toast2=babelHelpers.interopRequireDefault(_Toast);
 var _CheckBox=require(625 /* ./component/CheckBox */);var _CheckBox2=babelHelpers.interopRequireDefault(_CheckBox);
 var _DramaDetailScene=require(606 /* ./DramaDetailScene */);var _DramaDetailScene2=babelHelpers.interopRequireDefault(_DramaDetailScene);
 var _SQLite=require(614 /* ./db/SQLite */);var _SQLite2=babelHelpers.interopRequireDefault(_SQLite);
+
 var sqlite=new _SQLite2.default();
 var index=1;
 var datas=[];
@@ -100594,7 +100583,7 @@ toDeleteIds=[];
 if(toDeleteIds.length!=0){
 sqlite.deleteHistoryByIds(toDeleteIds).
 then(function(){
-_reactNative.ToastAndroid.show('删除成功',_reactNative.ToastAndroid.SHORT);
+ToastAndrToastoid.show('删除成功');
 _this2.setState({
 isDeleteMode:false,
 isAllSelect:false});
@@ -100605,7 +100594,7 @@ catch(function(err){
 _this2._onCancelPress();
 }).done();
 }else{
-_reactNative.ToastAndroid.show('请选择删除项',_reactNative.ToastAndroid.SHORT);
+_Toast2.default.show('请选择删除项');
 }
 }},{key:'_onItemPress',value:function _onItemPress(
 
@@ -100666,7 +100655,7 @@ isRefreshing:false});
 
 }).catch(function(err){
 console.log(err);
-_reactNative.ToastAndroid.show('获取数据失败',_reactNative.ToastAndroid.SHORT);
+_Toast2.default.show('获取数据失败');
 }).done();
 }},{key:'render',value:function render()
 
