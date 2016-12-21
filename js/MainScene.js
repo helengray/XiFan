@@ -74,9 +74,9 @@ export default class MainScene extends Component{
 	}
 
 	render(){
-		// <ViewPagerAndroid 
-				// 	style={{flex:1}} 
-				// 	initialPage={0} 
+		// <ViewPagerAndroid
+				// 	style={{flex:1}}
+				// 	initialPage={0}
 				// 	scrollEnabled={false}
 				// 	ref={(viewPager)=>{this.viewPager = viewPager}}
 				// >

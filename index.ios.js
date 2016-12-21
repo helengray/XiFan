@@ -8,21 +8,47 @@ import React, { Component } from 'react';
 import {
     AppRegistry,
     Navigator,
-
+    View,
+    TouchableOpacity,
+    Text,
 } from 'react-native';
 
 import MainScene from './js/MainScene';
 import AppNavigator from './js/component/AppNavigator';
 import DramaComponent from './js/component/DramaComponent';
+import DramaDetailComponent from './js/DramaDetailScene';
 
 class XiFan extends Component {
 
     render(){
         return(
             <AppNavigator id='MainScene' data='' name='首页' component={MainScene} showLeftButton={false}/>
+
         );
     }
 }
+
+// class MyView extends Component{
+//
+//     jump(){
+//         this.props.navigator.push({
+//             title:'下一页',
+//             component:MyView
+//         });
+//     }
+//
+//     render(){
+//         return(
+//             <View style={{flex:1,backgroundColor:'black'}}>
+//                 <View style={{height:200,backgroundColor:'red'}}>
+//                     <TouchableOpacity onPress={this.jump.bind(this)}>
+//                         <Text>点击跳转</Text>
+//                     </TouchableOpacity>
+//                 </View>
+//             </View>
+//         );
+//     }
+//}
 
 
 AppRegistry.registerComponent('XiFan', () => XiFan);

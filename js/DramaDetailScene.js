@@ -7,16 +7,16 @@ import {
 	RefreshControl,
 	ScrollView,
 	TouchableOpacity,
-	ViewPagerAndroid,
 	Picker,
-	ToastAndroid,
 	TouchableWithoutFeedback,
-	InteractionManager
+	InteractionManager,
 } from 'react-native';
+
+import Toast from './component/Toast';
+import ScrollableTabView from 'react-native-scrollable-tab-view';
 import Cheerio from 'cheerio-without-node-native';
 import VideoPlayScene from './VideoPlayScene';
 import SQLite from './db/SQLite';
-var sqlite = new SQLite();
 import Movie from './db/Movie';
 import History from './db/History';
 const HOST_URL = 'http://m.y3600.com/78/';
@@ -35,7 +35,7 @@ const HOST_URL = 'http://m.y3600.com/78/';
 // 	currSource:0,//当前来源列表索引
 // 	hasStart:false,//是否已经开播
 //}
-
+var sqlite = new SQLite();
 export default class DramaDetailScene extends Component{
 
 	constructor(props){
@@ -50,6 +50,7 @@ export default class DramaDetailScene extends Component{
 			currSource:0,//当前来源列表索引
 			hasStart:false,//是否已经开播
 			currPlayList:[],//当前播放的集数，对应到来源列表
+            modalVisible:false,
 		}
 	}
 
@@ -256,7 +257,7 @@ console.log('id = '+id);
 					this._d_ac(id);
 					break;
 				default :
-					ToastAndroid.show('赞不支持播放',ToastAndroid.SHORT);
+                    Toast.show('赞不支持播放');
 				break;
 			}
 		}else{
@@ -362,7 +363,7 @@ console.log('video player url = '+url);
 		if(itemViews && itemViews.length > 0){
 			return(
 				<Picker
-					style={{flex:1,height:40}}
+					style={{flex:1,marginTop:-100,marginBottom:-100}}
 					selectedValue={this.state.currSource}
 					onValueChange={(itemValue,itemPosition)=>{
 //console.log('value='+itemValue+' position='+itemPosition);
@@ -376,18 +377,16 @@ console.log('video player url = '+url);
 				</Picker>
 				);
 		}else{
-			return(<Text style={{flex:1,fontSize:12}}>未知</Text>);
+			return(<Text style={{fontSize:12}}>未知</Text>);
 		}
 	}
 
 	//加载中页面
 	_renderLoadingView(){
 	    return(
-	    	<View style={styles.container}>
-		        <View style = {{flex:1,justifyContent:'center',alignItems:'center'}}>
-		        	<Text>加载中，请稍后...</Text>
-		        </View>
-		    </View>
+			<View style = {{flex:1,justifyContent:'center',alignItems:'center'}}>
+				<Text>加载中，请稍后...</Text>
+			</View>
 	      );
   	}
 
@@ -404,7 +403,7 @@ console.log('video player url = '+url);
 			sourceListItemViews.push(this._getSourceListItemView(i,sourceList[i]));
 		}
 		sourceListView = this._getSourceListView(sourceListItemViews);
-		
+
 		//集数列表view
 		var playListViews =[];
 		var playList = this.state.playList;
@@ -422,18 +421,17 @@ console.log('video player url = '+url);
 
 			}
 		}
-		
 		return(
 			<View style={styles.container}>
 				<View style={styles.topContainer}>
 					<Image style={styles.image} source={{uri:this.props.data.pic}}/>
 					<View style={styles.topRightContainer}>
 						<Text style={{fontSize:12}}>更新至：{this.props.data.title}</Text>
-						<View style={{height:40,flexDirection:'row',justifyContent:'center',alignItems:'center',marginTop:5}}>
+						<View style={{flexDirection:'row',marginTop:15}}>
 							<Text style={{fontSize:12}} >来源：</Text>
-							{sourceListView}
+                            {sourceListView}
 						</View>
-						<View style={{flexDirection:'row',alignItems:'center',marginTop:30,}}>
+						<View style={{height:30,flexDirection:'row',alignItems:'center',marginTop:30,}}>
 							<TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={this._onPlayVideoPress.bind(this)}>
 								<Image style={{height:18,width:18}} source={require('../img/icon_video_play.png')}/>
 								<Text style={{color:'white',fontSize:14}}>播放</Text>
@@ -446,44 +444,24 @@ console.log('video player url = '+url);
 						</View>
 					</View>
 				</View>
-				<View style={styles.centerContainer}>
-					<View style={{flex:1}}>
-						<TouchableOpacity style={styles.tabItem} activeOpacity={0.6} onPress={this._onTabPress.bind(this,0)}>
-							<Text style={this.state.tabIndex==0?styles.tabTextSelect:styles.tabTextUnSelect}>剧集</Text>
-						</TouchableOpacity>
+				<ScrollableTabView
+					tabBarPosition="top"
+					initialPage={0}
+					tabBarBackgroundColor="white"
+					tabBarInactiveTextColor="#d5d5d5"
+					tabBarActiveTextColor="#ff5722"
+					tabBarUnderlineStyle={{backgroundColor:"#ff5722"}}
+				>
+					<ScrollView tabLabel="剧集">
+						<View style={{flex:1,flexDirection:'row',flexWrap:'wrap',padding:5}}>
+                            {playListViews}
+						</View>
 
-						<View style={this.state.tabIndex==0?styles.tabUnderlineSelect:styles.tabUnderlineUnSelect}/>
-					</View>
-					<View style={{flex:1}}>
-						<TouchableOpacity style={styles.tabItem} activeOpacity={0.6} onPress={this._onTabPress.bind(this,1)}>
-							<Text style={this.state.tabIndex==0?styles.tabTextUnSelect:styles.tabTextSelect}>简介</Text>
-						</TouchableOpacity>
-						<View style={this.state.tabIndex==0?styles.tabUnderlineUnSelect:styles.tabUnderlineSelect}/>
-					</View>
-				</View>
-				<View style={styles.bottomContainer}>
-					<ViewPagerAndroid 
-						style={{flex:1}} 
-						initialPage={0} 
-						scrollEnabled={true}
-						onPageSelected={this._onPageSelected.bind(this)}
-						ref={(viewPager)=>{this.viewPager = viewPager}}
-						>
-						<View style={{flex:1}}>
-							<ScrollView>
-								<View style={{flex:1,flexDirection:'row',flexWrap:'wrap',padding:5}}>
-									{playListViews}
-								</View>
-								
-							</ScrollView>
-						</View>
-						<View style={{flex:1}}>
-							<ScrollView>
-								<Text style={{padding:5,fontSize:14}}>{this.state.desc}</Text>
-							</ScrollView>
-						</View>
-					</ViewPagerAndroid>
-				</View>
+					</ScrollView>
+					<ScrollView tabLabel="简介">
+						<Text style={{padding:5,fontSize:14}}>{this.state.desc}</Text>
+					</ScrollView>
+				</ScrollableTabView>
 			</View>
 			);
 	}
@@ -515,10 +493,10 @@ console.log('video player url = '+url);
 				this._play(playInfo);
 				this._saveHistory(currSource,index,playInfo.text);
 			}else {
-				ToastAndroid.show("暂无播放信息",ToastAndroid.SHORT);
+                Toast.show("暂无播放信息");
 			}
 		}else {
-			ToastAndroid.show("暂无播放信息",ToastAndroid.SHORT);
+            Toast.show("暂无播放信息");
 		}
 	}
 	//收藏
@@ -558,21 +536,21 @@ console.log('video player url = '+url);
 			}
 			coll.setTime(time);
 			sqlite.saveCollection(coll).then(()=>{
-				ToastAndroid.show('收藏成功',ToastAndroid.SHORT);
+                Toast.show('收藏成功');
 				this.setState({
 					isCollection:isCollection,
 				});
 			}).catch((e)=>{
-				ToastAndroid.show('收藏失败',ToastAndroid.SHORT);
+                Toast.show('收藏失败');
 			}).done();
 		}else {//删除
 			sqlite.deleteCollectionByName(this.props.data.name).then(()=>{
-				ToastAndroid.show('取消收藏成功',ToastAndroid.SHORT);
+                Toast.show('取消收藏成功');
 				this.setState({
 					isCollection:isCollection,
 				})
 			}).catch((e)=>{
-				ToastAndroid.show('取消收藏失败',ToastAndroid.SHORT);
+                Toast.show('取消收藏失败');
 			}).done();
 		}
 	}
@@ -619,55 +597,25 @@ console.log('video player url = '+url);
 var styles = StyleSheet.create({
 	container:{
 		flex:1,
-		flexDirection:'column',
+		backgroundColor:'#fafafa',
 	},
 	topContainer:{
 		height:150,
 		flexDirection:'row',
-		padding:15
+		padding:15,
 	},
 	topRightContainer:{
-		flex:1,
-		flexDirection:'column',
 		marginLeft:10,
 		marginTop:5,
 		marginBottom:5,
+		flex:1,
 	},
 	image:{
 		height:120,
 		width:100,
 		resizeMode:Image.resizeMode.strech,
 	},
-	centerContainer:{
-		height:45,
-		flexDirection:'row',
-		justifyContent:'center',
-		backgroundColor:'white',
-		alignItems:'center',
-	},
-	tabItem:{
-		flex:1,
-		justifyContent:'center',
-		alignItems:'center',
-	},
-	tabTextSelect:{
-		textAlign:'center',
-		color:'#ff5722',
-	},
-	tabTextUnSelect:{
-		textAlign:'center',
-		color:'#d5d5d5',
-	},
-	tabUnderlineSelect:{
-		height:2,
-		backgroundColor:'#ff5722',
-	},
-	tabUnderlineUnSelect:{
-		height:2,
-	},
-	bottomContainer:{
-		flex:1,
-	},
+
 	button:{
 		flexDirection:'row',
 		width:60,
