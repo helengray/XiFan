@@ -1,15 +1,9 @@
 import React,{Component} from 'react';
 import {
-	View,
-	Text,
-	Navigator,
 	Platform,
-	StyleSheet,
-	ViewPagerAndroid,
-	TouchableOpacity,
-	Image,
 	BackAndroid,
 } from 'react-native';
+
 
 import XTabBar from './component/XTabBar';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
@@ -22,10 +16,6 @@ var sqLite = new SQLite();
 export default class MainScene extends Component{
 	constructor(props){
 		super(props);
-		this.state={
-			tabIndex:0,
-		}
-
 	}
 
 	componentDidMount(){
@@ -74,38 +64,21 @@ export default class MainScene extends Component{
 				initialPage={0}
 				tabBarPosition="bottom"
 				renderTabBar={()=>
-				<XTabBar
-					activeTextColor="#ff5722"
-					inactiveTextColor="#d5d5d5"
-					activeIcons={[require('../img/icon_home_select.png'),require('../img/icon_my_select.png')]}
-					inactiveIcons={[require('../img/icon_home_unselect.png'),require('../img/icon_my_unselect.png')]}
-					/>
-				}>
+					<XTabBar
+						activeTextColor="#ff5722"
+						inactiveTextColor="#d5d5d5"
+						activeIcons={[require('../img/icon_home_select.png'),require('../img/icon_my_select.png')]}
+						inactiveIcons={[require('../img/icon_home_unselect.png'),require('../img/icon_my_unselect.png')]}
+						/>
+				}
+			>
+
 				<HomeScene tabLabel="首页" navigator={this.props.navigator}/>
+
 				<MyScene tabLabel="我的" navigator={this.props.navigator}/>
+
 			</ScrollableTabView>
 			);
 	}
 
 }
-
-var styles = StyleSheet.create({
-	ItemView:{
-		flex:1,
-		justifyContent:'center',
-		alignItems:'center',
-		marginTop:3,
-	},
-	TabTextSelect:{
-		flex:1,
-		textAlign:'center',
-		alignItems:'center',
-		color:'#ff5722',
-	},
-	TabTextUnSelect:{
-		flex:1,
-		textAlign:'center',
-		alignItems:'center',
-		color:'#d5d5d5',
-	},
-});

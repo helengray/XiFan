@@ -9,10 +9,13 @@ import {
 	Navigator,
 	BackAndroid,
 } from 'react-native';
+
+import TitleBar from './component/TitleBar';
+import BaseTitleBarScene from './component/BaseTitleBarScene';
 import DramaComponent from './component/DramaComponent'
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 //首页
-export default class HomeScene extends Component{
+export default class HomeScene extends BaseTitleBarScene{
 
 	constructor(props){
 		super(props);
@@ -21,8 +24,15 @@ export default class HomeScene extends Component{
 		};
 	}
 
+	static defaultProps = {
+        titleText:"首页",
+        subTitleText:"看韩剧，上稀饭",
+        showLeftButton:false,
+		titlePosition:'left'
+	};
 
-	render(){
+
+	renderContent(){
 		return(
 			<ScrollableTabView
 				initialPage={0}

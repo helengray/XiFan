@@ -1,18 +1,24 @@
 import React, {Component} from 'react';
 import {
     Navigator,
+    Platform,
+    /*View,
     Text,
     StyleSheet,
     Image,
     TouchableOpacity,
+    StatusBar*/
 } from 'react-native';
+
+let isIOS = Platform.OS === 'ios';
+//let TitleBarHeight = isIOS?64:50;
 //应用导航器
 export default class AppNavigator extends Component {
     constructor(props) {
         super(props);
     }
 
-    _renderLeftButton(route,navigator,index,navState){
+    /*_renderLeftButton(route,navigator,index,navState){
         var isShow = route.showLeftButton;
         if(isShow == null){
             isShow = true;
@@ -21,11 +27,11 @@ export default class AppNavigator extends Component {
             return null;
         }
         return (
-            <TouchableOpacity onPress={
+            <TouchableOpacity style={styles.navBarLeft} onPress={
                 () => navigator.pop()
             }>
                 <Image
-                    style={styles.left}
+                    style={styles.leftButton}
                     source={require('../../img/ic_actionbar_back.png')}
                 />
             </TouchableOpacity>
@@ -38,9 +44,40 @@ export default class AppNavigator extends Component {
 
     _renderTitle(route,navigator,index,navState){
         return (
-            <Text style={styles.title}>{route.title}</Text>
+            <View style={styles.navBarTitle}>
+                <Text style={styles.titleText}>{index==0?this.state.title:route.title}</Text>
+            </View>
+
         );
     }
+
+    _renderNavBar(){
+        if(this.state.displayNavBar === false){
+            return null;
+        }else {
+            return(
+                <Navigator.NavigationBar
+                    style={styles.toolbar}
+                    routeMapper={{
+                        LeftButton:this._renderLeftButton.bind(this),
+                        RightButton:this._renderRightButton.bind(this),
+                        Title:this._renderTitle.bind(this)
+                    }}/>
+            );
+        }
+    }
+
+    setTitle(title){
+        this.setState({
+            title:title,
+        });
+    }
+    //TODO 隐藏头部导航栏，目前没有什么较好的解决方案
+    displayNavBar(display){
+        this.setState({
+            displayNavBar:display
+        });
+    }*/
 
     render() {
         return (
@@ -48,16 +85,22 @@ export default class AppNavigator extends Component {
                 initialRoute={{
                     id: this.props.id,
                     data: this.props.data,
-                    title: this.props.name,
+                    titleText: this.props.titleText,
                     component: this.props.component,
-                    showLeftButton:this.props.showLeftButton,
-                    displayNavBar:this.props.displayNavBar
                 }}
                 renderScene={(route, navigator)=> {
                     let Scene = route.component;
-                    return <Scene id={route.id} data={route.data} name={route.title} navigator={navigator}/>
+                    //props parentRef={this}
+                    return (
+                        <Scene
+                        id={route.id}
+                        data={route.data}
+                        titleText={route.titleText}
+                        subTitleText={route.subTitleText}
+                        navigator={navigator}
+                        />
+                        );
                 }}
-                style={{flex: 1,}}
                 configureScene={(route) => {
                     if (route.sceneConfig) {
                         return route.sceneConfig;
@@ -66,35 +109,36 @@ export default class AppNavigator extends Component {
                     conf.gestures = null;
                     return conf;
                 }}
-                navigationBar={
-                    <Navigator.NavigationBar
-                    style={styles.toolbar}
-                    routeMapper={{
-                        LeftButton:this._renderLeftButton.bind(this),
-                        RightButton:this._renderRightButton.bind(this),
-                        Title:this._renderTitle.bind(this)
-                    }}/>
-                }
-                sceneStyle={{marginTop:60}}
+                sceneStyle={{marginTop:isIOS?20:0}}
             />
         );
     }
 }
 
-const styles = StyleSheet.create({
+/*const styles = StyleSheet.create({
     toolbar:{
-        height:60,
+        height:TitleBarHeight,
         backgroundColor:'#ff5722',
     },
-    title:{
-        fontSize:16,
-        color:'white',
-        marginTop:12,
+    navBarTitle:{
+        flex:1,
+        width:250,
+        alignItems:'center',
+        justifyContent:'center',
     },
-    left:{
+    titleText:{
+        fontSize:18,
+        color:'white',
+        textAlign:'center'
+    },
+    navBarLeft:{
+        width:40,
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    leftButton:{
         height:30,
         width:30,
-        marginTop:5,
-        marginLeft:12,
     }
-});
+});*/

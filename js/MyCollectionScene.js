@@ -9,12 +9,12 @@ import {
     RefreshControl,
 } from 'react-native';
 import DramaDetailScene from './DramaDetailScene';
-
+import BaseTitleBarScene from './component/BaseTitleBarScene';
 import SQLite from './db/SQLite';
 var sqlite = new SQLite();
 var index = 1;
 var datas = [];
-export default class MyCollectionScene extends Component{
+export default class MyCollectionScene extends BaseTitleBarScene{
     constructor(props){
         super(props);
         this.state={
@@ -23,6 +23,10 @@ export default class MyCollectionScene extends Component{
             }),
             isRefreshing:false,
         }
+    }
+
+    static defaultProps={
+        titleText:'我的收藏'
     }
 
     componentDidMount(){
@@ -94,7 +98,7 @@ export default class MyCollectionScene extends Component{
         }).done();
     }
 
-    render(){
+    renderContent(){
         var page = null;
         if(datas.length === 0){
             page = this._renderEmptyView();

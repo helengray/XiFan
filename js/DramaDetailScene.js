@@ -10,8 +10,10 @@ import {
 	Picker,
 	TouchableWithoutFeedback,
 	InteractionManager,
+    Platform
 } from 'react-native';
 
+import BaseTitleBarScene from './component/BaseTitleBarScene';
 import Toast from './component/Toast';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import Cheerio from 'cheerio-without-node-native';
@@ -36,7 +38,7 @@ const HOST_URL = 'http://m.y3600.com/78/';
 // 	hasStart:false,//是否已经开播
 //}
 var sqlite = new SQLite();
-export default class DramaDetailScene extends Component{
+export default class DramaDetailScene extends BaseTitleBarScene{
 
 	constructor(props){
 		super(props);
@@ -344,7 +346,7 @@ console.log('id = '+id);
 console.log('video player url = '+url);
 		this.props.navigator.push({
 			id:'VideoPlayScene',
-			title:'',
+			titleText:this.props.titleText,
 			data:{
 				type:type,
 				url:url,
@@ -363,7 +365,7 @@ console.log('video player url = '+url);
 		if(itemViews && itemViews.length > 0){
 			return(
 				<Picker
-					style={{flex:1,marginTop:-100,marginBottom:-100}}
+					style={Platform.OS === 'android'?styles.pickerAndroid:styles.pickerIOS}
 					selectedValue={this.state.currSource}
 					onValueChange={(itemValue,itemPosition)=>{
 //console.log('value='+itemValue+' position='+itemPosition);
@@ -390,7 +392,7 @@ console.log('video player url = '+url);
 	      );
   	}
 
-	render(){
+	renderContent(){
 
 		if(!this.state.loaded){
 			return this._renderLoadingView();
@@ -427,11 +429,11 @@ console.log('video player url = '+url);
 					<Image style={styles.image} source={{uri:this.props.data.pic}}/>
 					<View style={styles.topRightContainer}>
 						<Text style={{fontSize:12}}>更新至：{this.props.data.title}</Text>
-						<View style={{flexDirection:'row',marginTop:15}}>
+						<View style={{flex:1,height:40,flexDirection:'row',marginTop:5,alignItems:'center'}}>
 							<Text style={{fontSize:12}} >来源：</Text>
                             {sourceListView}
 						</View>
-						<View style={{height:30,flexDirection:'row',alignItems:'center',marginTop:30,}}>
+						<View style={{flexDirection:'row',alignItems:'center',marginTop:15,}}>
 							<TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={this._onPlayVideoPress.bind(this)}>
 								<Image style={{height:18,width:18}} source={require('../img/icon_video_play.png')}/>
 								<Text style={{color:'white',fontSize:14}}>播放</Text>
@@ -654,5 +656,14 @@ var styles = StyleSheet.create({
 		marginLeft:5,
 		marginRight:5,
 		padding:4,
+	},
+	pickerIOS:{
+		flex:1,
+        marginTop:-100,
+		marginBottom:-100
+	},
+	pickerAndroid:{
+		flex:1,
+		height:40
 	}
 });

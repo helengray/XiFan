@@ -9,6 +9,7 @@ import {
     RefreshControl,
 } from 'react-native';
 
+import BaseTitleBarScene from './component/BaseTitleBarScene';
 import Toast from './component/Toast';
 import CheckBox from './component/CheckBox';
 import DramaDetailScene from './DramaDetailScene';
@@ -22,7 +23,7 @@ var toDeleteIds = [];
 const PAGE_SIZE = 10;
 const CheckBoxName = 'CheckBox';
 var CheckBoxRefs = {};//存放item checkbox ref
-export default class ViewsHistoryScene extends Component{
+export default class ViewsHistoryScene extends BaseTitleBarScene{
     constructor(props){
         super(props);
         this.state={
@@ -35,6 +36,20 @@ export default class ViewsHistoryScene extends Component{
             isDeleteMode:false,
             isAllSelect:false,//是否全选
         }
+    }
+
+    static defaultProps = {
+        titleText:'观看历史',
+        rightButtonText:'全选',
+    }
+
+    showRightButton(){
+        return this.state.isDeleteMode;
+    }
+
+    onRightButtonPress(){
+        this._selectAll();
+        return true;
     }
 
     componentDidMount(){
@@ -110,19 +125,13 @@ export default class ViewsHistoryScene extends Component{
             return (
                 <View style={{flexDirection:'row'}}>
                     <TouchableOpacity
-                        style={{height:35,flex:1,backgroundColor:'#ff5722',alignItems:'center',justifyContent:'center'}}
-                        activeOpacity={0.8}
-                        onPress={this._selectAll.bind(this)}>
-                        <Text style={{color:'white',fontSize:16}}>全选/反选</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{height:35,flex:1,backgroundColor:'#aaaaaa',alignItems:'center',justifyContent:'center'}}
+                        style={{height:50,flex:1,backgroundColor:'#aaaaaa',alignItems:'center',justifyContent:'center'}}
                         activeOpacity={0.8}
                         onPress={this._onCancelPress.bind(this)}>
                         <Text style={{color:'white',fontSize:16}}>取消</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={{height:35,flex:1,backgroundColor:'#ff5722',alignItems:'center',justifyContent:'center'}}
+                        style={{height:50,flex:1,backgroundColor:'#ff5722',alignItems:'center',justifyContent:'center'}}
                         activeOpacity={0.8}
                         onPress={this._onDeletePress.bind(this)}>
                         <Text style={{color:'white',fontSize:16}}>删除</Text>
@@ -163,7 +172,7 @@ export default class ViewsHistoryScene extends Component{
         if(toDeleteIds.length != 0){
             sqlite.deleteHistoryByIds(toDeleteIds)
                 .then(()=>{
-                    ToastAndrToastoid.show('删除成功');
+                    Toast.show('删除成功');
                     this.setState({
                         isDeleteMode:false,
                         isAllSelect:false,
@@ -239,7 +248,7 @@ export default class ViewsHistoryScene extends Component{
         }).done();
     }
 
-    render(){
+    renderContent(){
         var page = null;
         if(datas.length === 0){
             page = this._renderEmptyView();

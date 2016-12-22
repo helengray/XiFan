@@ -250,7 +250,7 @@ export default class DramaComponent extends Component{
 	     	<TouchableOpacity onPress={()=>this._onItemPress(movie)} activeOpacity={0.8} >
 	     		<View>
 			        <Image source={{uri:movie.pic}} style={styles.thumbnail}>
-			        	<Text style={styles.title}>{movie.title}</Text>
+			        	<Text numberOfLines={1} style={styles.title}>{movie.title}</Text>
 			        </Image>
 			        <Text numberOfLines={1} style={styles.name}>{movie.name}</Text>
 			        <Text numberOfLines={1} style={styles.actor}>{movie.actor}</Text>
@@ -269,7 +269,7 @@ export default class DramaComponent extends Component{
 	  			navigator.push({
 	  				id:'DramaDetailScene',
 	  				data:movie,
-	  				title:movie.name,
+	  				titleText:movie.name,
 	  				component:DramaDetailScene
 	  			});
 	  		}
@@ -285,7 +285,7 @@ var styles = StyleSheet.create({
     flexWrap: 'wrap'
 	},
   row:{
-  	height:200,
+  	height:210,
     width:width,
     flexDirection:'column',
     justifyContent:'center',

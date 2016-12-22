@@ -7,7 +7,7 @@ export default class App extends Component {
 
     render(){
         return(
-            <AppNavigator id='MainScene' data='' name='首页' component={MainScene} showLeftButton={false}/>
+            <AppNavigator id='MainScene' component={MainScene}/>
         );
     }
 }
