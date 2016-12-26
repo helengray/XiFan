@@ -8,8 +8,9 @@ import {
 } from 'react-native';
 var Orientation = NativeModules.Orientation;
 import VideoView from './component/VideoView';
+import BaseTitleBarScene from './component/BaseTitleBarScene';
 
-export default class VideoPlayScene extends Component {
+export default class VideoPlayScene extends BaseTitleBarScene {
     constructor(props) {
         super(props);
         /*this._onPrepared = this._onPrepared.bind(this);
@@ -53,7 +54,7 @@ export default class VideoPlayScene extends Component {
         this.video.seekTo(millSecond);
     }*/
 
-    render() {
+    renderContent() {
         /*return (
             <View style={{flex: 1,justifyContent: 'center',}}>
                 <VideoView
@@ -100,8 +101,8 @@ export default class VideoPlayScene extends Component {
             </View>
         );*/
         var html = '';
-        var url = '';
-        switch (this.props.data.type) {
+        var url = this.props.data.url;
+        /*switch (this.props.data.type) {
             case 'bili':
                 url = this.props.data.url;
                 html =
@@ -191,7 +192,7 @@ export default class VideoPlayScene extends Component {
                     />
                 </View>
             );
-        } else {
+        } else {*/
             console.log('url=' + url);
             return (
                 <View style={{flex: 1, backgroundColor: 'black',}}>
@@ -221,11 +222,12 @@ export default class VideoPlayScene extends Component {
                             console.log('网页开始加载');
                         }}
                         onShouldStartLoadWithRequest={(request)=> {
-                            console.log('点击请求 url' + request);
+                            //console.log('自定义函数 url' + request.url);
+                            return true;
                         }}
                     />
                 </View>
             );
-        }
+        //}
     }
 }
