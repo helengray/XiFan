@@ -11,18 +11,17 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by Helen on 2016/9/20.
+ * Created by 李晓伟 on 2017/1/11.
  *
  */
-public class VideoViewPackage implements ReactPackage {
+
+public class XFLocalPackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<Class<? extends JavaScriptModule>> createJSModules() {
-        return Collections.emptyList();
+        return Arrays.<NativeModule>asList(
+                new OrientationModule(reactContext),
+                new UpdateCheckModule(reactContext)
+        );
     }
 
     @Override
@@ -30,5 +29,10 @@ public class VideoViewPackage implements ReactPackage {
         return Arrays.<ViewManager>asList(
                 new VideoViewManager()
         );
+    }
+
+    @Override
+    public List<Class<? extends JavaScriptModule>> createJSModules() {
+        return Collections.emptyList();
     }
 }

@@ -28,9 +28,9 @@ import javax.annotation.Nullable;
 
 /**
  * Created by Helen on 2016/9/19.
- *
+ * native VideoView
  */
-public class VideoViewManager extends SimpleViewManager<VideoView>{
+/*package*/ class VideoViewManager extends SimpleViewManager<VideoView>{
     private static final int COMMAND_PAUSE_ID = 1;
     private static final String COMMAND_PAUSE_NAME = "pause";
     private static final int COMMAND_START_ID = 2;

@@ -10,10 +10,13 @@ import {
 	Image,
 	BackAndroid,
 	ToastAndroid,
+    NativeModules
 } from 'react-native';
 import HomeScene from './HomeScene'
 import MyScene from './MyScene';
 import SQLite from './db/SQLite';
+import Config from './db/Config';
+var UpdateCheck = NativeModules.UpdateCheck;
 var sqLite = new SQLite();
 //首页
 export default class MainScene extends Component{
@@ -28,6 +31,8 @@ export default class MainScene extends Component{
 	componentDidMount(){
 		this._addBackAndroidListener(this.props.navigator);
 		sqLite.createTable();
+		console.log('当前版本号：'+UpdateCheck.CurrentBundleVersion);
+        UpdateCheck.check(Config.bundleVersion)
 	}
 
 	componentWillUnmount(){

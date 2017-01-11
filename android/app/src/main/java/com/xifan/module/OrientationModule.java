@@ -18,9 +18,9 @@ import javax.annotation.Nullable;
 
 /**
  * Created by Helen on 2016/8/23.
- *
+ * 应用的横竖屏切换
  */
-public class OrientationModule extends ReactContextBaseJavaModule{
+/*package*/ class OrientationModule extends ReactContextBaseJavaModule{
     private static final String ORIENTATION_LANDSCAPE_KEY = "LANDSCAPE";//横屏
     private static final String ORIENTATION_PORTRAIT_KEY = "PORTRAIT";//竖屏
 
